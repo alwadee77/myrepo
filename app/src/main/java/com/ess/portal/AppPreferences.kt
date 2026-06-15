@@ -17,9 +17,20 @@ class AppPreferences(context: Context) {
     fun isLoggedIn(): Boolean = prefs.getBoolean("logged_in", false)
     fun setLoggedIn(value: Boolean) = prefs.edit().putBoolean("logged_in", value).apply()
 
+    fun getUid(): Int = prefs.getInt("uid", 0)
+    fun setUid(uid: Int) = prefs.edit().putInt("uid", uid).apply()
+
+    fun getSessionId(): String = prefs.getString("session_id", "") ?: ""
+    fun setSessionId(sid: String) = prefs.edit().putString("session_id", sid).apply()
+
     fun isConfigured(): Boolean = getUrl().isNotEmpty() && getDb().isNotEmpty()
 
     fun logout() {
-        prefs.edit().putBoolean("logged_in", false).apply()
+        prefs.edit().apply {
+            putBoolean("logged_in", false)
+            putInt("uid", 0)
+            putString("session_id", "")
+            apply()
+        }
     }
 }

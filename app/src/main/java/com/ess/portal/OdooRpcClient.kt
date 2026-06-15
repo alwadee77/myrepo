@@ -124,7 +124,7 @@ object OdooRpcClient {
             put("domain", domain)
             put("fields", fields)
         })
-        return (result as? JSONObject)?.optJSONArray("records")
+        return result as? JSONArray
     }
 
     fun create(

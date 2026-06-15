@@ -29,6 +29,10 @@ class DashboardActivity : AppCompatActivity() {
 
         prefs = AppPreferences(this)
 
+        if (OdooRpcClient.getSession() == null && prefs.isLoggedIn()) {
+            OdooRpcClient.setSession(OdooRpcClient.Session(prefs.getUid(), prefs.getSessionId()))
+        }
+
         setSupportActionBar(findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 

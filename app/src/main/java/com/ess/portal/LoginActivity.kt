@@ -67,6 +67,8 @@ class LoginActivity : AppCompatActivity() {
 
                         if (session != null) {
                             prefs.setLoggedIn(true)
+                            prefs.setUid(session.uid)
+                            prefs.setSessionId(session.sessionId)
                             startActivity(
                                 Intent(this@LoginActivity, DashboardActivity::class.java)
                             )

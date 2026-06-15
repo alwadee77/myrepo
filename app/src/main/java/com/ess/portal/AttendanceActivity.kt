@@ -2,6 +2,7 @@ package com.ess.portal
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -77,8 +78,8 @@ class AttendanceActivity : AppCompatActivity() {
         val statusText = findViewById<TextView>(R.id.tv_attendance_status)
         val statusIcon = findViewById<TextView>(R.id.tv_status_icon)
         val lastAction = findViewById<TextView>(R.id.tv_last_action)
-        val emptyView = findViewById<android.view.View>(R.id.cv_empty_records)
-        val recordsView = findViewById<android.view.View>(R.id.layout_records)
+    val emptyView = findViewById<android.view.View>(R.id.cv_empty_records)
+    val recordsView = findViewById<android.widget.LinearLayout>(R.id.layout_records)
 
         if (records == null || records.length() == 0) {
             btn.text = "Check In"

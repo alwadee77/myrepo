@@ -65,7 +65,7 @@ class AttendanceActivity : AppCompatActivity() {
                         put("order", "check_in desc")
                     }
                 )
-                val records = (result as? JSONObject)?.optJSONArray("records")
+                val records = result as? JSONArray
 
                 withContext(Dispatchers.Main) {
                     updateAttendanceUI(records)
@@ -198,7 +198,7 @@ class AttendanceActivity : AppCompatActivity() {
                         put("fields", JSONArray(listOf("id", "check_in", "check_out")))
                     }
                 )
-                val records = (result as? JSONObject)?.optJSONArray("records")
+                val records = result as? JSONArray
 
                 var checkedIn = false
                 var openId = 0

@@ -74,7 +74,7 @@ class DashboardActivity : AppCompatActivity() {
                         put("fields", JSONArray(listOf("id", "name", "job_title", "department_id")))
                     }
                 )
-                val employees = (empResult as? JSONObject)?.optJSONArray("records")
+                val employees = empResult as? JSONArray
 
                 withContext(Dispatchers.Main) {
                     if (employees != null && employees.length() > 0) {
@@ -100,7 +100,7 @@ class DashboardActivity : AppCompatActivity() {
                         put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
                     }
                 )
-                val attendances = (attResult as? JSONObject)?.optJSONArray("records")
+                val attendances = attResult as? JSONArray
 
                 withContext(Dispatchers.Main) {
                     if (attendances != null && attendances.length() > 0) {
@@ -148,7 +148,7 @@ class DashboardActivity : AppCompatActivity() {
                         put("fields", JSONArray(listOf("id")))
                     }
                 )
-                val leaves = (leaveResult as? JSONObject)?.optJSONArray("records")
+                val leaves = leaveResult as? JSONArray
                 val pendingCount = leaves?.length() ?: 0
 
                 withContext(Dispatchers.Main) {
@@ -162,7 +162,7 @@ class DashboardActivity : AppCompatActivity() {
                         put("fields", JSONArray(listOf("id", "name", "virtual_remaining_leaves")))
                     }
                 )
-                val types = (typesResult as? JSONObject)?.optJSONArray("records")
+                val types = typesResult as? JSONArray
                 var totalBalance = 0.0
                 if (types != null) {
                     for (i in 0 until types.length()) {

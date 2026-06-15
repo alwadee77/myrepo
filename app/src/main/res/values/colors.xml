@@ -20,8 +20,8 @@
     <color name="error">#FFEF4444</color>
     <color name="error_light">#FFFEE2E2</color>
 
-    <color name="info">#FF3B82F6</color>
-    <color name="info_light">#FFDBEAFE</color>
+    <color name="info">#FF253F7D</color>
+    <color name="info_light">#FFD6E0F0</color>
 
     <color name="surface">#FFFFFFFF</color>
     <color name="on_surface">#FF1E293B</color>
@@ -33,6 +33,6 @@
 
     <color name="sidebar_bg">#FF0F172A</color>
 
-    <color name="welcome_banner_start">#FF4A6CF7</color>
-    <color name="welcome_banner_end">#FF2563EB</color>
+    <color name="welcome_banner_start">#FF253F7D</color>
+    <color name="welcome_banner_end">#FF253F7D</color>
 </resources>

@@ -100,7 +100,6 @@ class DashboardActivity : AppCompatActivity() {
                         val emp = employees.getJSONObject(0)
                         OdooRpcClient.setEmployeeId(emp.optInt("id", 0))
                         val name = emp.optString("name", getString(R.string.employee_default))
-                        findViewById<TextView>(R.id.tv_employee_name).text = name
                         findViewById<TextView>(R.id.tv_employee_name_detail).text = name
                         findViewById<TextView>(R.id.tv_greeting).text = getString(R.string.greeting_format, name)
                         val job = emp.optString("job_title", "")
@@ -148,7 +147,7 @@ class DashboardActivity : AppCompatActivity() {
                         val mins = (totalSeconds % 3600) / 60
                         findViewById<TextView>(R.id.tv_worked_hours).text = getString(R.string.hours_format, hours, mins)
 
-                        findViewById<TextView>(R.id.tv_attendance_count).text = "${if (checkOut == JSONObject.NULL) 1 else 0}"
+                        findViewById<TextView>(R.id.tv_attendance_count).text = "${attendances.length()}"
                     } else {
                         findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_not_clocked_in)
                         findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.error))
@@ -194,6 +193,35 @@ class DashboardActivity : AppCompatActivity() {
                     findViewById<TextView>(R.id.tv_time_off_count).text = "$pendingCount"
                 }
 
+                val overtimeResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.attendance.overtime", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id.user_id", "=", uid)),
+                            JSONArray(listOf("date", "=", getTodayDate()))
+                        )))
+                        put("fields", JSONArray(listOf("id")))
+                    }
+                )
+                val overtimeCount = (overtimeResult as? JSONArray)?.length() ?: 0
+
+                val expenseResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.expense", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id.user_id", "=", uid)),
+                            JSONArray(listOf("state", "in", listOf("draft", "submit", "approve")))
+                        )))
+                        put("fields", JSONArray(listOf("id")))
+                    }
+                )
+                val expenseCount = (expenseResult as? JSONArray)?.length() ?: 0
+
+                withContext(Dispatchers.Main) {
+                    findViewById<TextView>(R.id.tv_overtime_count).text = "$overtimeCount"
+                    findViewById<TextView>(R.id.tv_expense_count).text = "$expenseCount"
+                }
+
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@DashboardActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_LONG).show()
@@ -236,10 +264,6 @@ class DashboardActivity : AppCompatActivity() {
                 loadDashboard()
                 true
             }
-            R.id.action_settings -> {
-                startActivity(Intent(this, SettingsActivity::class.java))
-                true
-            }
             R.id.action_logout -> {
                 showLogoutDialog()
                 true
@@ -249,7 +273,7 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun showLogoutDialog() {
-        AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.logout_title))
             .setMessage(getString(R.string.logout_message))
             .setPositiveButton(getString(R.string.logout_yes)) { _, _ ->
@@ -259,6 +283,11 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
             }
             .setNegativeButton(getString(R.string.logout_no), null)
-            .show()
+            .create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(this, R.color.primary_dark))
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(this, R.color.gray))
+        }
+        dialog.show()
     }
 }

@@ -62,6 +62,33 @@
     <string name="logout_yes">Yes</string>
     <string name="logout_no">No</string>
 
+    <!-- Profile Screen -->
+    <string name="profile_personal_details">PERSONAL DETAILS</string>
+    <string name="profile_work_information">WORK INFORMATION</string>
+    <string name="profile_work_email">Work Email</string>
+    <string name="profile_work_phone">Work Phone</string>
+    <string name="profile_mobile_phone">Mobile Phone</string>
+    <string name="profile_emergency_contact">Emergency Contact</string>
+    <string name="profile_emergency_phone">Emergency Phone</string>
+    <string name="profile_manager">Manager</string>
+    <string name="profile_work_location">Work Location</string>
+    <string name="profile_registration_no">Registration No.</string>
+    <string name="profile_pin">PIN</string>
+    <string name="profile_not_found">Employee data not found</string>
+
+    <!-- Attendance Screen -->
+    <string name="attendance_check_in">Check In</string>
+    <string name="attendance_register_check_in">Register Check-In</string>
+    <string name="attendance_register_check_out">Register Check-Out</string>
+    <string name="attendance_checked_in">You are checked in</string>
+    <string name="attendance_since">Since %1$s</string>
+    <string name="attendance_no_record">No attendance record for today</string>
+    <string name="attendance_this_month">This Month</string>
+    <string name="attendance_no_records_title">No Records</string>
+    <string name="attendance_no_records_sub">No attendance records found for this month</string>
+    <string name="attendance_checked_in_msg">Checked in!</string>
+    <string name="attendance_checked_out_msg">Checked out!</string>
+
     <!-- Error -->
     <string name="error_loading">Error: %1$s</string>
 </resources>

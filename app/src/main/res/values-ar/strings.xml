@@ -62,6 +62,33 @@
     <string name="logout_yes">نعم</string>
     <string name="logout_no">لا</string>
 
+    <!-- Profile Screen -->
+    <string name="profile_personal_details">البيانات الشخصية</string>
+    <string name="profile_work_information">معلومات العمل</string>
+    <string name="profile_work_email">البريد الإلكتروني</string>
+    <string name="profile_work_phone">هاتف العمل</string>
+    <string name="profile_mobile_phone">الجوال</string>
+    <string name="profile_emergency_contact">جهة الاتصال الطارئة</string>
+    <string name="profile_emergency_phone">هاتف الطوارئ</string>
+    <string name="profile_manager">المدير المباشر</string>
+    <string name="profile_work_location">موقع العمل</string>
+    <string name="profile_registration_no">رقم التسجيل</string>
+    <string name="profile_pin">الرقم السري</string>
+    <string name="profile_not_found">لم يتم العثور على بيانات الموظف</string>
+
+    <!-- Attendance Screen -->
+    <string name="attendance_check_in">تسجيل دخول</string>
+    <string name="attendance_register_check_in">تسجيل دخول</string>
+    <string name="attendance_register_check_out">تسجيل خروج</string>
+    <string name="attendance_checked_in">أنت مسجل الدخول</string>
+    <string name="attendance_since">منذ %1$s</string>
+    <string name="attendance_no_record">لا يوجد سجل حضور لليوم</string>
+    <string name="attendance_this_month">هذا الشهر</string>
+    <string name="attendance_no_records_title">لا توجد سجلات</string>
+    <string name="attendance_no_records_sub">لم يتم العثور على سجلات حضور لهذا الشهر</string>
+    <string name="attendance_checked_in_msg">تم تسجيل الدخول!</string>
+    <string name="attendance_checked_out_msg">تم تسجيل الخروج!</string>
+
     <!-- Error -->
     <string name="error_loading">خطأ: %1$s</string>
 </resources>

@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="Attendance"
+        app:title="@string/menu_attendance"
         app:titleTextColor="@android:color/white"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
@@ -52,7 +52,7 @@
                             android:id="@+id/tv_attendance_status"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Not Clocked In"
+                            android:text="@string/status_not_clocked_in"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface" />
@@ -61,7 +61,7 @@
                             android:id="@+id/tv_last_action"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="No records today"
+                            android:text="@string/attendance_no_record"
                             android:textSize="13sp"
                             android:textColor="@color/gray"
                             android:layout_marginTop="4dp" />
@@ -72,7 +72,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="48dp"
                         android:paddingHorizontal="24dp"
-                        android:text="Check In"
+                        android:text="@string/attendance_check_in"
                         android:textSize="15sp"
                         android:textAllCaps="false"
                         android:backgroundTint="@color/success" />
@@ -83,7 +83,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="This Month"
+                android:text="@string/attendance_this_month"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
@@ -126,7 +126,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No Records"
+                        android:text="@string/attendance_no_records_title"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         android:textColor="@color/gray"
@@ -135,7 +135,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No attendance records found for this month"
+                        android:text="@string/attendance_no_records_sub"
                         android:textSize="12sp"
                         android:textColor="@color/gray_light"
                         android:layout_marginTop="4dp" />

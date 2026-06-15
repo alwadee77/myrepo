@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="My Profile"
+        app:title="@string/menu_my_profile"
         app:titleTextColor="@android:color/white"
         app:navigationIcon="?attr/homeAsUpIndicator" />
 
@@ -88,7 +88,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PERSONAL DETAILS"
+                android:text="@string/profile_personal_details"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
@@ -126,7 +126,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Work Email"
+                                android:text="@string/profile_work_email"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -148,7 +148,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Work Phone"
+                                android:text="@string/profile_work_phone"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -177,7 +177,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Mobile Phone"
+                                android:text="@string/profile_mobile_phone"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -199,7 +199,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Emergency Contact"
+                                android:text="@string/profile_emergency_contact"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -228,7 +228,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Emergency Phone"
+                                android:text="@string/profile_emergency_phone"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -254,7 +254,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="WORK INFORMATION"
+                android:text="@string/profile_work_information"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
@@ -292,7 +292,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Manager"
+                                android:text="@string/profile_manager"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -314,7 +314,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Work Location"
+                                android:text="@string/profile_work_location"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -343,7 +343,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Registration No."
+                                android:text="@string/profile_registration_no"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView
@@ -365,7 +365,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="PIN"
+                                android:text="@string/profile_pin"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray_light" />
                             <TextView

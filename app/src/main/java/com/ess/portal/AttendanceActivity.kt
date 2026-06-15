@@ -1,5 +1,6 @@
 package com.ess.portal
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -23,6 +24,11 @@ import java.util.Locale
 class AttendanceActivity : AppCompatActivity() {
 
     private lateinit var prefs: AppPreferences
+
+    override fun attachBaseContext(newBase: Context) {
+        val p = AppPreferences(newBase)
+        super.attachBaseContext(LocaleUtil.applyLocale(newBase, p.getLang()))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +78,7 @@ class AttendanceActivity : AppCompatActivity() {
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AttendanceActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AttendanceActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -88,10 +94,10 @@ class AttendanceActivity : AppCompatActivity() {
         recordsView.removeAllViews()
 
         if (records == null || records.length() == 0) {
-            btn.text = "Check In"
+            btn.text = getString(R.string.attendance_check_in)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
-            statusText.text = "Not Clocked In"
-            lastAction.text = "No attendance record for today"
+            statusText.text = getString(R.string.status_not_clocked_in)
+            lastAction.text = getString(R.string.attendance_no_record)
             emptyView.visibility = View.VISIBLE
             recordsView.visibility = View.GONE
             return
@@ -104,14 +110,14 @@ class AttendanceActivity : AppCompatActivity() {
         val checkOut = last.opt("check_out")
 
         if (checkOut == JSONObject.NULL) {
-            btn.text = "Register Check-Out"
+            btn.text = getString(R.string.attendance_register_check_out)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.error)
-            statusText.text = "You are checked in"
-            lastAction.text = "Since ${formatTime(last.optString("check_in", ""))}"
+            statusText.text = getString(R.string.attendance_checked_in)
+            lastAction.text = getString(R.string.attendance_since, formatTime(last.optString("check_in", "")))
         } else {
-            btn.text = "Register Check-In"
+            btn.text = getString(R.string.attendance_register_check_in)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
-            statusText.text = "Completed"
+            statusText.text = getString(R.string.status_completed)
             val ci = formatDate(last.optString("check_in", ""))
             val co = formatTime(last.optString("check_out", ""))
             lastAction.text = "$ci $co"
@@ -215,7 +221,7 @@ class AttendanceActivity : AppCompatActivity() {
                     OdooRpcClient.write(baseUrl, db, "hr.attendance", openId,
                         JSONObject().apply { put("check_out", now) })
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AttendanceActivity, "Checked out!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_out_msg), Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
@@ -225,14 +231,14 @@ class AttendanceActivity : AppCompatActivity() {
                             put("check_in", now)
                         })
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AttendanceActivity, "Checked in!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_in_msg), Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 loadMonthAttendance()
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AttendanceActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AttendanceActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             }
         }

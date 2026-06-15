@@ -1,5 +1,6 @@
 package com.ess.portal
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
@@ -13,6 +14,11 @@ import org.json.JSONArray
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var prefs: AppPreferences
+
+    override fun attachBaseContext(newBase: Context) {
+        val p = AppPreferences(newBase)
+        super.attachBaseContext(LocaleUtil.applyLocale(newBase, p.getLang()))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +77,12 @@ class ProfileActivity : AppCompatActivity() {
                         findViewById<TextView>(R.id.tv_pin).text = emp.optString("pin", "-")
 
                     } else {
-                        Toast.makeText(this@ProfileActivity, "Employee data not found", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ProfileActivity, getString(R.string.profile_not_found), Toast.LENGTH_SHORT).show()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@ProfileActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@ProfileActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             }
         }

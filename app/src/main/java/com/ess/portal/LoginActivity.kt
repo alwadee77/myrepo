@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val result = OdooApi.authenticate(
+                    val session = OdooRpcClient.authenticate(
                         baseUrl = prefs.getUrl(),
                         db = prefs.getDb(),
                         login = username,
@@ -65,10 +65,10 @@ class LoginActivity : AppCompatActivity() {
                         btnLogin.isEnabled = true
                         btnLogin.text = "Sign In"
 
-                        if (result != null) {
+                        if (session != null) {
                             prefs.setLoggedIn(true)
                             startActivity(
-                                Intent(this@LoginActivity, MainActivity::class.java)
+                                Intent(this@LoginActivity, DashboardActivity::class.java)
                             )
                             finish()
                         } else {

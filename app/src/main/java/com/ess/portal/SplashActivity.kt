@@ -19,7 +19,7 @@ class SplashActivity : AppCompatActivity() {
             } else if (!prefs.isLoggedIn()) {
                 Intent(this, LoginActivity::class.java)
             } else {
-                Intent(this, MainActivity::class.java)
+                Intent(this, DashboardActivity::class.java)
             }
             startActivity(intent)
             finish()

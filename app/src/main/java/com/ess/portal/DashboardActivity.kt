@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class DashboardActivity : AppCompatActivity() {
 
@@ -26,7 +29,6 @@ class DashboardActivity : AppCompatActivity() {
         prefs = AppPreferences(this)
 
         setSupportActionBar(findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar))
-        supportActionBar?.title = "ESS Portal"
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         setupClickListeners()
@@ -50,37 +52,44 @@ class DashboardActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
+                val uid = OdooRpcClient.getSession()?.uid ?: return@launch
 
-                val employee = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.employee",
-                    domain = JSONArray(listOf(
-                        JSONArray(listOf("user_id", "=", OdooRpcClient.getSession()?.uid))
-                    )),
-                    fields = JSONArray(listOf("id", "name", "job_title", "department_id"))
+                val empResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.employee", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))))
+                        put("fields", JSONArray(listOf("id", "name", "job_title")))
+                    }
                 )
+                val employees = (empResult as? JSONObject)?.optJSONArray("records")
 
                 withContext(Dispatchers.Main) {
-                    if (employee != null && employee.length() > 0) {
-                        val emp = employee.getJSONObject(0)
+                    if (employees != null && employees.length() > 0) {
+                        val emp = employees.getJSONObject(0)
+                        OdooRpcClient.setEmployeeId(emp.optInt("id", 0))
                         findViewById<TextView>(R.id.tv_employee_name).text = emp.optString("name", "Employee")
                     }
                 }
 
-                val attendances = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.attendance",
-                    domain = JSONArray(listOf(
-                        JSONArray(listOf("employee_id.user_id", "=", OdooRpcClient.getSession()?.uid)),
-                        JSONArray(listOf("check_in", ">=", "${getTodayDate()} 00:00:00"))
-                    )),
-                    fields = JSONArray(listOf("id", "check_in", "check_out"))
+                val today = getTodayDate()
+                val attResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.attendance", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id.user_id", "=", uid)),
+                            JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
+                        )))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                    }
                 )
+                val attendances = (attResult as? JSONObject)?.optJSONArray("records")
 
                 withContext(Dispatchers.Main) {
                     if (attendances != null && attendances.length() > 0) {
                         val last = attendances.getJSONObject(attendances.length() - 1)
                         val checkIn = last.optString("check_in", "")
                         val checkOut = last.opt("check_out")
-                        val time = if (checkIn.length() >= 16) checkIn.substring(11, 16) else "--:--"
+                        val time = if (checkIn.length >= 16) checkIn.substring(11, 16) else "--:--"
 
                         if (checkOut == JSONObject.NULL) {
                             findViewById<TextView>(R.id.tv_check_label).text = "Check Out"
@@ -106,35 +115,39 @@ class DashboardActivity : AppCompatActivity() {
                     }
                 }
 
-                val leaves = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.leave",
-                    domain = JSONArray(listOf(
-                        JSONArray(listOf("employee_id.user_id", "=", OdooRpcClient.getSession()?.uid)),
-                        JSONArray(listOf("state", "=", "draft"))
-                    )),
-                    fields = JSONArray(listOf("id"))
+                val leaveResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.leave", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id.user_id", "=", uid)),
+                            JSONArray(listOf("state", "=", "draft"))
+                        )))
+                        put("fields", JSONArray(listOf("id")))
+                    }
                 )
+                val leaves = (leaveResult as? JSONObject)?.optJSONArray("records")
 
                 withContext(Dispatchers.Main) {
                     findViewById<TextView>(R.id.tv_pending).text = "${leaves?.length() ?: 0}"
                 }
 
-                val leaveTypes = OdooRpcClient.callKw(
+                val typesResult = OdooRpcClient.callKw(
                     baseUrl, db, "hr.leave.type", "search_read",
                     kwargs = JSONObject().apply {
                         put("fields", JSONArray(listOf("id", "name", "virtual_remaining_leaves")))
                     }
                 )
-                val types = leaveTypes?.optJSONArray("records")
+                val types = (typesResult as? JSONObject)?.optJSONArray("records")
                 var totalBalance = 0.0
                 if (types != null) {
                     for (i in 0 until types.length()) {
                         totalBalance += types.getJSONObject(i).optDouble("virtual_remaining_leaves", 0.0)
                     }
                 }
+                val displayBalance = totalBalance
                 withContext(Dispatchers.Main) {
-                    findViewById<TextView>(R.id.tv_leave_days).text = "${String.format("%.1f", totalBalance)}"
-                    findViewById<TextView>(R.id.tv_leave_balance).text = "${String.format("%.1f", totalBalance)} days"
+                    findViewById<TextView>(R.id.tv_leave_days).text = String.format("%.1f", displayBalance)
+                    findViewById<TextView>(R.id.tv_leave_balance).text = "${String.format("%.1f", displayBalance)} days"
                 }
 
             } catch (e: Exception) {
@@ -146,8 +159,8 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun getTodayDate(): String {
-        val cal = java.util.Calendar.getInstance()
-        return "${cal.get(java.util.Calendar.YEAR)}-${String.format("%02d", cal.get(java.util.Calendar.MONTH) + 1)}-${String.format("%02d", cal.get(java.util.Calendar.DAY_OF_MONTH))}"
+        val cal = Calendar.getInstance()
+        return "${cal.get(Calendar.YEAR)}-${String.format("%02d", cal.get(Calendar.MONTH) + 1)}-${String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))}"
     }
 
     private fun calculateWorkedSeconds(attendances: JSONArray): Long {
@@ -158,7 +171,7 @@ class DashboardActivity : AppCompatActivity() {
             val checkOut = a.opt("check_out")
             if (checkOut != JSONObject.NULL && checkIn.isNotEmpty()) {
                 try {
-                    val sdf = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US)
+                    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
                     val inTime = sdf.parse(checkIn)?.time ?: 0L
                     val outTime = sdf.parse(checkOut.toString())?.time ?: 0L
                     total += (outTime - inTime) / 1000

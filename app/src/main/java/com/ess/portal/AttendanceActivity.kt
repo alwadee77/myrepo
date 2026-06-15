@@ -11,6 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class AttendanceActivity : AppCompatActivity() {
 
@@ -41,30 +45,21 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val uid = OdooRpcClient.getSession()?.uid ?: return@launch
-
-                val employee = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.employee",
-                    domain = JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))),
-                    fields = JSONArray(listOf("id"))
-                )
-                val empId = employee?.optJSONObject(0)?.optInt("id", 0) ?: 0
-                if (empId == 0) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AttendanceActivity, "No employee linked", Toast.LENGTH_SHORT).show()
-                    }
-                    return@launch
-                }
+                val empId = OdooRpcClient.getEmployeeId()
+                if (empId == 0) return@launch
 
                 val today = getTodayDate()
-                val records = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.attendance",
-                    domain = JSONArray(listOf(
-                        JSONArray(listOf("employee_id", "=", empId)),
-                        JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
-                    )),
-                    fields = JSONArray(listOf("id", "check_in", "check_out"))
+                val result = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.attendance", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id", "=", empId)),
+                            JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
+                        )))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                    }
                 )
+                val records = (result as? JSONObject)?.optJSONArray("records")
 
                 withContext(Dispatchers.Main) {
                     updateAttendanceUI(records)
@@ -139,25 +134,21 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val uid = OdooRpcClient.getSession()?.uid ?: return@launch
-
-                val employee = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.employee",
-                    domain = JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))),
-                    fields = JSONArray(listOf("id"))
-                )
-                val empId = employee?.optJSONObject(0)?.optInt("id", 0) ?: 0
+                val empId = OdooRpcClient.getEmployeeId()
                 if (empId == 0) return@launch
 
                 val today = getTodayDate()
-                val records = OdooRpcClient.searchRead(
-                    baseUrl, db, "hr.attendance",
-                    domain = JSONArray(listOf(
-                        JSONArray(listOf("employee_id", "=", empId)),
-                        JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
-                    )),
-                    fields = JSONArray(listOf("id", "check_in", "check_out"))
+                val result = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.attendance", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("employee_id", "=", empId)),
+                            JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
+                        )))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                    }
                 )
+                val records = (result as? JSONObject)?.optJSONArray("records")
 
                 var checkedIn = false
                 var openId = 0
@@ -170,25 +161,19 @@ class AttendanceActivity : AppCompatActivity() {
                 }
 
                 if (checkedIn && openId > 0) {
-                    OdooRpcClient.callKw(
-                        baseUrl, db, "hr.attendance", "write",
-                        args = JSONArray(listOf(
-                            JSONArray(listOf(openId)),
-                            JSONObject().apply { put("check_out", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).format(java.util.Date())) }
-                        ))
-                    )
+                    val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+                    OdooRpcClient.write(baseUrl, db, "hr.attendance", openId,
+                        JSONObject().apply { put("check_out", now) })
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@AttendanceActivity, "Checked out!", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    val now = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).format(java.util.Date())
-                    OdooRpcClient.callKw(
-                        baseUrl, db, "hr.attendance", "create",
-                        args = JSONArray(listOf(JSONObject().apply {
+                    val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
+                    OdooRpcClient.create(baseUrl, db, "hr.attendance",
+                        JSONObject().apply {
                             put("employee_id", empId)
                             put("check_in", now)
-                        }))
-                    )
+                        })
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@AttendanceActivity, "Checked in!", Toast.LENGTH_SHORT).show()
                     }
@@ -204,8 +189,8 @@ class AttendanceActivity : AppCompatActivity() {
     }
 
     private fun getTodayDate(): String {
-        val cal = java.util.Calendar.getInstance()
-        return "${cal.get(java.util.Calendar.YEAR)}-${String.format("%02d", cal.get(java.util.Calendar.MONTH) + 1)}-${String.format("%02d", cal.get(java.util.Calendar.DAY_OF_MONTH))}"
+        val cal = Calendar.getInstance()
+        return "${cal.get(Calendar.YEAR)}-${String.format("%02d", cal.get(Calendar.MONTH) + 1)}-${String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))}"
     }
 
     private fun formatTime(dt: String): String {

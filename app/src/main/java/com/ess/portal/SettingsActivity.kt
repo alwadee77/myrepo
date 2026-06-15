@@ -33,7 +33,12 @@ class SettingsActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            prefs.setUrl(url.trimEnd('/'))
+            val normalizedUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                "https://$url"
+            } else {
+                url
+            }
+            prefs.setUrl(normalizedUrl.trimEnd('/'))
             prefs.setDb(db)
             prefs.setLoggedIn(false)
 

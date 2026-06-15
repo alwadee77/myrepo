@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_main)
-        setSupportActionBar(findViewById(androidx.appcompat.widget.Toolbar(R.id.toolbar)))
+        setSupportActionBar(findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar))
         supportActionBar?.title = "ESS Portal"
 
         progressBar = findViewById(R.id.progress_bar)

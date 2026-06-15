@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,14 +37,26 @@ class DashboardActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        findViewById<android.view.View>(R.id.btn_check_in).setOnClickListener {
+        findViewById<android.view.View>(R.id.btn_attendance).setOnClickListener {
             startActivity(Intent(this, AttendanceActivity::class.java))
-        }
-        findViewById<android.view.View>(R.id.btn_request_leave).setOnClickListener {
-            Toast.makeText(this, "Time Off coming soon", Toast.LENGTH_SHORT).show()
         }
         findViewById<android.view.View>(R.id.btn_profile).setOnClickListener {
             Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<android.view.View>(R.id.btn_time_off).setOnClickListener {
+            Toast.makeText(this, "Time Off coming soon", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<android.view.View>(R.id.btn_overtime).setOnClickListener {
+            Toast.makeText(this, "Overtime coming soon", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<android.view.View>(R.id.btn_hr_requests).setOnClickListener {
+            Toast.makeText(this, "HR Requests coming soon", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<android.view.View>(R.id.btn_expenses).setOnClickListener {
+            Toast.makeText(this, "Expenses coming soon", Toast.LENGTH_SHORT).show()
+        }
+        findViewById<android.view.View>(R.id.btn_contract).setOnClickListener {
+            Toast.makeText(this, "Contract & Salary coming soon", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -58,7 +71,7 @@ class DashboardActivity : AppCompatActivity() {
                     baseUrl, db, "hr.employee", "search_read",
                     kwargs = JSONObject().apply {
                         put("domain", JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))))
-                        put("fields", JSONArray(listOf("id", "name", "job_title")))
+                        put("fields", JSONArray(listOf("id", "name", "job_title", "department_id")))
                     }
                 )
                 val employees = (empResult as? JSONObject)?.optJSONArray("records")
@@ -67,7 +80,12 @@ class DashboardActivity : AppCompatActivity() {
                     if (employees != null && employees.length() > 0) {
                         val emp = employees.getJSONObject(0)
                         OdooRpcClient.setEmployeeId(emp.optInt("id", 0))
-                        findViewById<TextView>(R.id.tv_employee_name).text = emp.optString("name", "Employee")
+                        val name = emp.optString("name", "Employee")
+                        findViewById<TextView>(R.id.tv_employee_name).text = name
+                        findViewById<TextView>(R.id.tv_employee_name_detail).text = name
+                        findViewById<TextView>(R.id.tv_greeting).text = "Welcome back, $name!"
+                        val job = emp.optString("job_title", "")
+                        findViewById<TextView>(R.id.tv_employee_job).text = if (job.isNotEmpty()) job else "Employee"
                     }
                 }
 
@@ -79,7 +97,7 @@ class DashboardActivity : AppCompatActivity() {
                             JSONArray(listOf("employee_id.user_id", "=", uid)),
                             JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
                         )))
-                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
                     }
                 )
                 val attendances = (attResult as? JSONObject)?.optJSONArray("records")
@@ -87,31 +105,36 @@ class DashboardActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main) {
                     if (attendances != null && attendances.length() > 0) {
                         val last = attendances.getJSONObject(attendances.length() - 1)
-                        val checkIn = last.optString("check_in", "")
                         val checkOut = last.opt("check_out")
-                        val time = if (checkIn.length >= 16) checkIn.substring(11, 16) else "--:--"
+                        val badge = findViewById<TextView>(R.id.tv_attendance_status_badge)
 
                         if (checkOut == JSONObject.NULL) {
-                            findViewById<TextView>(R.id.tv_check_label).text = "Check Out"
-                            findViewById<TextView>(R.id.tv_check_status).text = time
+                            badge.visibility = android.view.View.VISIBLE
+                            badge.text = "IN"
+                            badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
+                            badge.setBackgroundResource(R.drawable.bg_icon_green)
                             findViewById<TextView>(R.id.tv_today_status).text = "Clocked In"
-                            findViewById<TextView>(R.id.tv_today_status).setTextColor(0xFF16A34A.toInt())
+                            findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
                         } else {
-                            findViewById<TextView>(R.id.tv_check_label).text = "Check In"
-                            findViewById<TextView>(R.id.tv_check_status).text = "Done"
+                            badge.visibility = android.view.View.VISIBLE
+                            badge.text = "OUT"
+                            badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
+                            badge.setBackgroundResource(R.drawable.bg_icon_red_light)
                             findViewById<TextView>(R.id.tv_today_status).text = "Completed"
-                            findViewById<TextView>(R.id.tv_today_status).setTextColor(0xFF666666.toInt())
+                            findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
                         }
 
                         val totalSeconds = calculateWorkedSeconds(attendances)
                         val hours = totalSeconds / 3600
                         val mins = (totalSeconds % 3600) / 60
                         findViewById<TextView>(R.id.tv_worked_hours).text = "${hours}h ${mins}m"
+
+                        findViewById<TextView>(R.id.tv_attendance_count).text = "${if (checkOut == JSONObject.NULL) 1 else 0}"
                     } else {
-                        findViewById<TextView>(R.id.tv_check_status).text = "Not yet"
                         findViewById<TextView>(R.id.tv_today_status).text = "Not clocked in"
-                        findViewById<TextView>(R.id.tv_today_status).setTextColor(0xFFDC2626.toInt())
+                        findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.error))
                         findViewById<TextView>(R.id.tv_worked_hours).text = "0h 0m"
+                        findViewById<TextView>(R.id.tv_attendance_count).text = "0"
                     }
                 }
 
@@ -120,15 +143,17 @@ class DashboardActivity : AppCompatActivity() {
                     kwargs = JSONObject().apply {
                         put("domain", JSONArray(listOf(
                             JSONArray(listOf("employee_id.user_id", "=", uid)),
-                            JSONArray(listOf("state", "=", "draft"))
+                            JSONArray(listOf("state", "in", listOf("confirm", "validate", "validate1")))
                         )))
                         put("fields", JSONArray(listOf("id")))
                     }
                 )
                 val leaves = (leaveResult as? JSONObject)?.optJSONArray("records")
+                val pendingCount = leaves?.length() ?: 0
 
                 withContext(Dispatchers.Main) {
-                    findViewById<TextView>(R.id.tv_pending).text = "${leaves?.length() ?: 0}"
+                    findViewById<TextView>(R.id.tv_pending).text = "$pendingCount"
+                    findViewById<TextView>(R.id.tv_hr_requests_count).text = "$pendingCount"
                 }
 
                 val typesResult = OdooRpcClient.callKw(
@@ -144,10 +169,10 @@ class DashboardActivity : AppCompatActivity() {
                         totalBalance += types.getJSONObject(i).optDouble("virtual_remaining_leaves", 0.0)
                     }
                 }
-                val displayBalance = totalBalance
+
                 withContext(Dispatchers.Main) {
-                    findViewById<TextView>(R.id.tv_leave_days).text = String.format("%.1f", displayBalance)
-                    findViewById<TextView>(R.id.tv_leave_balance).text = "${String.format("%.1f", displayBalance)} days"
+                    findViewById<TextView>(R.id.tv_leave_days).text = String.format("%.1f", totalBalance)
+                    findViewById<TextView>(R.id.tv_time_off_count).text = "$pendingCount"
                 }
 
             } catch (e: Exception) {

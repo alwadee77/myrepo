@@ -3,9 +3,10 @@
     <style name="Theme.EmployeeSelfService" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="colorOnPrimary">@android:color/white</item>
         <item name="colorSurface">@android:color/white</item>
+        <item name="colorOnSurface">@color/on_surface</item>
         <item name="android:statusBarColor">@color/primary_dark</item>
         <item name="android:navigationBarColor">@color/primary_dark</item>
     </style>

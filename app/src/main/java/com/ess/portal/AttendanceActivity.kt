@@ -1,11 +1,14 @@
 package com.ess.portal
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,26 +41,28 @@ class AttendanceActivity : AppCompatActivity() {
             toggleAttendance()
         }
 
-        loadTodayAttendance()
+        loadMonthAttendance()
     }
 
-    private fun loadTodayAttendance() {
+    private fun loadMonthAttendance() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
                 val empId = OdooRpcClient.getEmployeeId()
-                if (empId == 0) return@launch
 
                 val today = getTodayDate()
+                val monthStart = "${today.substring(0, 7)}-01"
+
                 val result = OdooRpcClient.callKw(
                     baseUrl, db, "hr.attendance", "search_read",
                     kwargs = JSONObject().apply {
                         put("domain", JSONArray(listOf(
                             JSONArray(listOf("employee_id", "=", empId)),
-                            JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
+                            JSONArray(listOf("check_in", ">=", "$monthStart 00:00:00"))
                         )))
-                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
+                        put("order", "check_in desc")
                     }
                 )
                 val records = (result as? JSONObject)?.optJSONArray("records")
@@ -76,57 +81,101 @@ class AttendanceActivity : AppCompatActivity() {
     private fun updateAttendanceUI(records: JSONArray?) {
         val btn = findViewById<Button>(R.id.btn_attendance_action)
         val statusText = findViewById<TextView>(R.id.tv_attendance_status)
-        val statusIcon = findViewById<TextView>(R.id.tv_status_icon)
         val lastAction = findViewById<TextView>(R.id.tv_last_action)
-    val emptyView = findViewById<android.view.View>(R.id.cv_empty_records)
-    val recordsView = findViewById<android.widget.LinearLayout>(R.id.layout_records)
+        val emptyView = findViewById<CardView>(R.id.cv_empty_records)
+        val recordsView = findViewById<LinearLayout>(R.id.layout_records)
+
+        recordsView.removeAllViews()
 
         if (records == null || records.length() == 0) {
             btn.text = "Check In"
+            btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
             statusText.text = "Not Clocked In"
-            lastAction.text = "No records today"
-            statusIcon.text = "\u23F1"
-            emptyView.visibility = android.view.View.VISIBLE
-            recordsView.visibility = android.view.View.GONE
+            lastAction.text = "No attendance record for today"
+            emptyView.visibility = View.VISIBLE
+            recordsView.visibility = View.GONE
             return
         }
 
-        emptyView.visibility = android.view.View.GONE
-        recordsView.visibility = android.view.View.VISIBLE
-        recordsView.removeAllViews()
+        emptyView.visibility = View.GONE
+        recordsView.visibility = View.VISIBLE
 
-        val last = records.getJSONObject(records.length() - 1)
+        val last = records.getJSONObject(0)
         val checkOut = last.opt("check_out")
 
         if (checkOut == JSONObject.NULL) {
-            btn.text = "Check Out"
-            statusText.text = "Clocked In"
-            statusIcon.text = "\u23F9"
+            btn.text = "Register Check-Out"
+            btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.error)
+            statusText.text = "You are checked in"
             lastAction.text = "Since ${formatTime(last.optString("check_in", ""))}"
         } else {
-            btn.text = "Check In"
+            btn.text = "Register Check-In"
+            btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
             statusText.text = "Completed"
-            statusIcon.text = "\u2705"
-            lastAction.text = "Last: ${formatTime(last.optString("check_out", ""))}"
+            val ci = formatDate(last.optString("check_in", ""))
+            val co = formatTime(last.optString("check_out", ""))
+            lastAction.text = "$ci $co"
         }
 
+        // Month records list
         for (i in 0 until records.length()) {
             val rec = records.getJSONObject(i)
             val ci = rec.optString("check_in", "")
             val co = rec.opt("check_out")
-            val row = androidx.appcompat.widget.AppCompatTextView(this)
-            row.layoutParams = android.view.ViewGroup.LayoutParams(
-                android.view.ViewGroup.LayoutParams.MATCH_PARENT,
-                android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            val hours = rec.optDouble("worked_hours", 0.0)
+
+            val card = CardView(this)
+            val lp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
             )
-            row.setPadding(20, 16, 20, 16)
-            row.text = "${formatTime(ci)} - ${if (co == JSONObject.NULL) "Now" else formatTime(co.toString())}"
-            row.textSize = 14f
-            row.setTextColor(0xFF1a1a1a.toInt())
-            if (i < records.length() - 1) {
-                row.setBackgroundResource(android.R.drawable.divider_horizontal_bright)
-            }
-            recordsView.addView(row)
+            lp.bottomMargin = 8
+            card.layoutParams = lp
+            card.radius = 12f
+            card.setCardBackgroundColor(0xFFFFFFFF.toInt())
+            card.cardElevation = 2f
+            card.setPadding(0, 0, 0, 0)
+
+            val row = LinearLayout(this)
+            row.orientation = LinearLayout.HORIZONTAL
+            row.gravity = android.view.Gravity.CENTER_VERTICAL
+            row.setPadding(16, 14, 16, 14)
+
+            val dateTv = TextView(this)
+            dateTv.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            dateTv.text = formatDate(ci)
+            dateTv.textSize = 13f
+            dateTv.setTextColor(0xFF1E293B.toInt())
+            dateTv.setTypeface(null, android.graphics.Typeface.BOLD)
+
+            val timeTv = TextView(this)
+            timeTv.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            timeTv.text = "${formatTime(ci)} - ${if (co == JSONObject.NULL) "\u2014" else formatTime(co.toString())}"
+            timeTv.textSize = 12f
+            timeTv.setTextColor(0xFF64748B.toInt())
+
+            val hoursTv = TextView(this)
+            hoursTv.layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            hoursTv.text = if (hours > 0) "%.2f".format(hours) else "\u2014"
+            hoursTv.textSize = 12f
+            hoursTv.setTextColor(0xFF64748B.toInt())
+            hoursTv.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
+
+            row.addView(dateTv)
+            row.addView(timeTv)
+            val spacer = View(this)
+            spacer.layoutParams = LinearLayout.LayoutParams(16, 1)
+            row.addView(spacer)
+            row.addView(hoursTv)
+
+            card.addView(row)
+            recordsView.addView(card)
         }
     }
 
@@ -180,7 +229,7 @@ class AttendanceActivity : AppCompatActivity() {
                     }
                 }
 
-                loadTodayAttendance()
+                loadMonthAttendance()
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AttendanceActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -196,5 +245,16 @@ class AttendanceActivity : AppCompatActivity() {
 
     private fun formatTime(dt: String): String {
         return if (dt.length >= 16) dt.substring(11, 16) else dt
+    }
+
+    private fun formatDate(dt: String): String {
+        return if (dt.length >= 10) {
+            val parts = dt.substring(0, 10).split("-")
+            if (parts.size == 3) {
+                val months = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                val m = parts[1].toIntOrNull()?.let { if (it in 1..12) months[it - 1] else parts[1] } ?: parts[1]
+                "$m ${parts[2]}, ${parts[0]}"
+            } else dt.substring(0, 10)
+        } else dt
     }
 }

@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#f5f5f5">
+    android:background="@color/bg">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:title="Attendance"
         app:titleTextColor="@android:color/white"
@@ -19,7 +19,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="20dp"
+        android:padding="16dp"
         android:fillViewport="true">
 
         <LinearLayout
@@ -27,79 +27,79 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Status Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
                 app:cardBackgroundColor="@android:color/white"
-                android:padding="32dp"
-                android:gravity="center">
+                android:padding="24dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:id="@+id/tv_status_icon"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:gravity="center"
-                        android:text="&#9201;"
-                        android:textSize="32sp"
-                        android:background="@drawable/bg_icon_purple"
-                        android:layout_marginBottom="12dp" />
-
-                    <TextView
-                        android:id="@+id/tv_attendance_status"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Not Clocked In"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#1a1a1a" />
+                        android:layout_weight="1"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/tv_last_action"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="No records today"
-                        android:textSize="13sp"
-                        android:textColor="#999"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="24dp" />
+                        <TextView
+                            android:id="@+id/tv_attendance_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Not Clocked In"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface" />
+
+                        <TextView
+                            android:id="@+id/tv_last_action"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="No records today"
+                            android:textSize="13sp"
+                            android:textColor="@color/gray"
+                            android:layout_marginTop="4dp" />
+                    </LinearLayout>
 
                     <Button
                         android:id="@+id/btn_attendance_action"
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:text="Check In"
-                        android:textSize="16sp"
-                        android:backgroundTint="@color/primary" />
-
-                    <TextView
-                        android:id="@+id/tv_location_hint"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Location tracking enabled"
-                        android:textSize="11sp"
-                        android:textColor="#999"
-                        android:layout_marginTop="8dp" />
+                        android:layout_height="48dp"
+                        android:paddingHorizontal="24dp"
+                        android:text="Check In"
+                        android:textSize="15sp"
+                        android:textAllCaps="false"
+                        android:backgroundTint="@color/success" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- This Month Records -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today's Records"
-                android:textSize="16sp"
+                android:text="This Month"
+                android:textSize="11sp"
                 android:textStyle="bold"
-                android:textColor="#1a1a1a"
+                android:textColor="@color/gray"
+                android:letterSpacing="0.05"
+                android:textAllCaps="true"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="12dp" />
 
+            <!-- Records List -->
+            <LinearLayout
+                android:id="@+id/layout_records"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <!-- Empty State -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_empty_records"
                 android:layout_width="match_parent"
@@ -109,20 +109,38 @@
                 app:cardBackgroundColor="@android:color/white"
                 android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No attendance records for today"
-                    android:textSize="14sp"
-                    android:textColor="#999" />
-            </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="24dp">
 
-            <LinearLayout
-                android:id="@+id/layout_records"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="&#9201;"
+                        android:textSize="40sp"
+                        android:textColor="@color/gray_light" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Records"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/gray"
+                        android:layout_marginTop="8dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No attendance records found for this month"
+                        android:textSize="12sp"
+                        android:textColor="@color/gray_light"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

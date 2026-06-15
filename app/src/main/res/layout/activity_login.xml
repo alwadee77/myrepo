@@ -33,16 +33,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome"
+                android:text="HR Portal"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                android:textColor="@color/black"
+                android:textColor="@color/on_surface"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign in to your account"
+                android:text="Please sign in to access your dashboard"
                 android:textSize="14sp"
                 android:textColor="@color/gray"
                 android:layout_marginBottom="28dp" />
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Username / Email"
+                android:hint="Email Address"
                 app:startIconDrawable="@android:drawable/ic_menu_search"
                 app:startIconTint="@color/gray"
                 app:endIconMode="clear_text"

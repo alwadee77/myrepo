@@ -3,21 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/bg">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="ESS Portal"
+        app:title="Workplace Hub"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f5f5f5"
         android:fillViewport="true">
 
         <LinearLayout
@@ -25,345 +25,748 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@drawable/splash_bg" />
-
+            <!-- Welcome Banner -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingHorizontal="20dp"
-                android:layout_marginTop="-60dp">
+                android:padding="24dp"
+                android:background="@drawable/bg_welcome_banner">
 
-                <androidx.cardview.widget.CardView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Self-Service Portal"
+                    android:textSize="11sp"
+                    android:textColor="@android:color/white"
+                    android:alpha="0.8"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05" />
+
+                <TextView
+                    android:id="@+id/tv_greeting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Welcome back,"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tv_employee_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Employee!"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:layout_marginTop="-2dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manage your corporate records and workspace requests"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"
+                    android:alpha="0.7"
+                    android:layout_marginTop="6dp" />
+            </LinearLayout>
+
+            <!-- Employee Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="-32dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="4dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_avatar"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_logo"
+                        android:contentDescription="Avatar"
+                        android:background="@drawable/bg_icon_purple"
+                        android:padding="8dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="14dp">
+
+                        <TextView
+                            android:id="@+id/tv_employee_name_detail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Employee Name"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface" />
+
+                        <TextView
+                            android:id="@+id/tv_employee_job"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Job Position"
+                            android:textSize="13sp"
+                            android:textColor="@color/gray"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_attendance_status_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:paddingHorizontal="12dp"
+                        android:text="OUT"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/error"
+                        android:background="@drawable/bg_icon_red_light"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Quick Actions Header -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dashboard"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray"
+                android:letterSpacing="0.05"
+                android:textAllCaps="true"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Menu Grid - Row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:paddingHorizontal="16dp">
+
+                <!-- My Profile -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
                     app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:src="@drawable/ic_logo"
+                            android:contentDescription="Profile"
+                            android:background="@drawable/bg_icon_green"
+                            android:padding="10dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="My Profile"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View / edit your details"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Attendance -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_attendance"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+
+                            <TextView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:text="&#9201;"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_icon_purple" />
+
+                            <TextView
+                                android:id="@+id/tv_attendance_count"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="top|end"
+                                android:gravity="center"
+                                android:background="@drawable/bg_badge"
+                                android:text="0"
+                                android:textSize="9sp"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Attendance"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Check-ins today"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Menu Grid - Row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="12dp">
+
+                <!-- Time Off -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_time_off"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+
+                            <TextView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:text="&#128197;"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_icon_green" />
+
+                            <TextView
+                                android:id="@+id/tv_time_off_count"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="top|end"
+                                android:gravity="center"
+                                android:background="@drawable/bg_badge"
+                                android:text="0"
+                                android:textSize="9sp"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Time Off"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Apply &amp; track requests"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Overtime -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_overtime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+
+                            <TextView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:text="&#9203;"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_icon_blue" />
+
+                            <TextView
+                                android:id="@+id/tv_overtime_count"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="top|end"
+                                android:gravity="center"
+                                android:background="@drawable/bg_badge"
+                                android:text="0"
+                                android:textSize="9sp"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Overtime"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Submit overtime requests"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Menu Grid - Row 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="12dp">
+
+                <!-- HR Requests -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_hr_requests"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+
+                            <TextView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:text="&#128172;"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_icon_purple" />
+
+                            <TextView
+                                android:id="@+id/tv_hr_requests_count"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="top|end"
+                                android:gravity="center"
+                                android:background="@drawable/bg_badge"
+                                android:text="0"
+                                android:textSize="9sp"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="HR Requests"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Letters, assets, visa..."
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Expenses -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_expenses"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <FrameLayout
+                            android:layout_width="44dp"
+                            android:layout_height="44dp">
+
+                            <TextView
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
+                                android:gravity="center"
+                                android:text="&#128179;"
+                                android:textSize="20sp"
+                                android:background="@drawable/bg_icon_green" />
+
+                            <TextView
+                                android:id="@+id/tv_expense_count"
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_gravity="top|end"
+                                android:gravity="center"
+                                android:background="@drawable/bg_badge"
+                                android:text="0"
+                                android:textSize="9sp"
+                                android:textColor="@android:color/white"
+                                android:textStyle="bold" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Expenses"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Submit &amp; track reimbursement"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <!-- Menu Grid - Row 4 (Contract only, centered) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:paddingHorizontal="16dp"
+                android:layout_marginTop="12dp">
+
+                <!-- Contract & Salary -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btn_contract"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@android:color/white"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:gravity="center"
+                            android:text="&#128179;"
+                            android:textSize="20sp"
+                            android:background="@drawable/bg_icon_blue" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Contract &amp; Salary"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="View your HR profile"
+                            android:textSize="11sp"
+                            android:textColor="@color/gray_light"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Empty spacer -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:visibility="invisible" />
+            </LinearLayout>
+
+            <!-- Today's Overview -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today's Overview"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/gray"
+                android:letterSpacing="0.05"
+                android:textAllCaps="true"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Attendance Summary Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:padding="20dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
 
-                        <ImageView
-                            android:id="@+id/iv_avatar"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:src="@drawable/ic_logo"
-                            android:contentDescription="Avatar"
-                            android:background="@drawable/bg_card"
-                            android:padding="8dp" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Attendance"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface" />
+
+                        <TextView
+                            android:id="@+id/tv_today_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="13sp"
+                            android:textColor="@color/gray" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/border"
+                        android:layout_marginBottom="16dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical"
-                            android:layout_marginStart="16dp">
+                            android:gravity="center">
 
                             <TextView
-                                android:id="@+id/tv_greeting"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Welcome back,"
-                                android:textSize="13sp"
-                                android:textColor="#999" />
-
-                            <TextView
-                                android:id="@+id/tv_employee_name"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Employee"
-                                android:textSize="20sp"
-                                android:textStyle="bold"
-                                android:textColor="#1a1a1a" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Quick Actions"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#1a1a1a"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="12dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3">
-
-                    <LinearLayout
-                        android:id="@+id/btn_check_in"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_card"
-                        android:layout_marginEnd="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:text="&#9201;"
-                            android:textSize="24sp"
-                            android:background="@drawable/bg_icon_purple"
-                            android:layout_marginBottom="8dp" />
-
-                        <TextView
-                            android:id="@+id/tv_check_label"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Check In"
-                            android:textSize="12sp"
-                            android:textColor="#1a1a1a"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_check_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="--:--"
-                            android:textSize="11sp"
-                            android:textColor="#999" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btn_request_leave"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_card"
-                        android:layout_marginHorizontal="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:text="&#128197;"
-                            android:textSize="24sp"
-                            android:background="@drawable/bg_icon_blue"
-                            android:layout_marginBottom="8dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Time Off"
-                            android:textSize="12sp"
-                            android:textColor="#1a1a1a"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/tv_leave_balance"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="-- days"
-                            android:textSize="11sp"
-                            android:textColor="#999" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/btn_profile"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="12dp"
-                        android:background="@drawable/bg_card"
-                        android:layout_marginStart="6dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground">
-
-                        <TextView
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:gravity="center"
-                            android:text="&#128100;"
-                            android:textSize="24sp"
-                            android:background="@drawable/bg_icon_green"
-                            android:layout_marginBottom="8dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Profile"
-                            android:textSize="12sp"
-                            android:textColor="#1a1a1a"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="View details"
-                            android:textSize="11sp"
-                            android:textColor="#999" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today's Overview"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#1a1a1a"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="12dp" />
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="2dp"
-                    app:cardBackgroundColor="@android:color/white"
-                    android:padding="20dp"
-                    android:layout_marginBottom="24dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Attendance"
-                                android:textSize="15sp"
-                                android:textStyle="bold"
-                                android:textColor="#1a1a1a" />
-
-                            <TextView
-                                android:id="@+id/tv_today_status"
+                                android:id="@+id/tv_worked_hours"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textSize="13sp"
-                                android:textColor="#999" />
-                        </LinearLayout>
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/primary" />
 
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="#eee"
-                            android:layout_marginBottom="16dp" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Today"
+                                android:textSize="11sp"
+                                android:textColor="@color/gray"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:weightSum="3">
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                            <LinearLayout
-                                android:layout_width="0dp"
+                            <TextView
+                                android:id="@+id/tv_leave_days"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:gravity="center">
+                                android:text="--"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/info" />
 
-                                <TextView
-                                    android:id="@+id/tv_worked_hours"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="--"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#7C3AED" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Today"
-                                    android:textSize="11sp"
-                                    android:textColor="#999"
-                                    android:layout_marginTop="4dp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
+                            <TextView
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:gravity="center">
+                                android:text="Leave Bal."
+                                android:textSize="11sp"
+                                android:textColor="@color/gray"
+                                android:layout_marginTop="4dp" />
+                        </LinearLayout>
 
-                                <TextView
-                                    android:id="@+id/tv_leave_days"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="--"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#2563EB" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Leave Bal."
-                                    android:textSize="11sp"
-                                    android:textColor="#999"
-                                    android:layout_marginTop="4dp" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
+                            <TextView
+                                android:id="@+id/tv_pending"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:orientation="vertical"
-                                android:gravity="center">
+                                android:text="--"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/success" />
 
-                                <TextView
-                                    android:id="@+id/tv_pending"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="--"
-                                    android:textSize="22sp"
-                                    android:textStyle="bold"
-                                    android:textColor="#16A34A" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Pending"
-                                    android:textSize="11sp"
-                                    android:textColor="#999"
-                                    android:layout_marginTop="4dp" />
-                            </LinearLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pending"
+                                android:textSize="11sp"
+                                android:textColor="@color/gray"
+                                android:layout_marginTop="4dp" />
                         </LinearLayout>
                     </LinearLayout>
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

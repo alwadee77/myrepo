@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FF666666</color>
-    <color name="light_gray">#FFF5F5F5</color>
 
     <color name="primary">#FF7C3AED</color>
     <color name="primary_dark">#FF5B21D6</color>
-    <color name="primary_light">#FFA78BFA</color>
-    <color name="accent">#FF7C3AED</color>
+    <color name="primary_light">#FFF3E8FF</color>
+    <color name="primary_bg">#FFA78BFA</color>
+
+    <color name="secondary">#FF64748B</color>
+    <color name="secondary_light">#FFF1F5F9</color>
+
+    <color name="success">#FF10B981</color>
+    <color name="success_light">#FFDCFCE7</color>
+
+    <color name="warning">#FFF59E0B</color>
+    <color name="warning_light">#FFFEF3C7</color>
+
+    <color name="error">#FFEF4444</color>
+    <color name="error_light">#FFFEE2E2</color>
+
+    <color name="info">#FF3B82F6</color>
+    <color name="info_light">#FFDBEAFE</color>
+
     <color name="surface">#FFFFFFFF</color>
-    <color name="on_surface">#FF1A1A1A</color>
-    <color name="error">#FFDC2626</color>
-    <color name="success">#FF16A34A</color>
+    <color name="on_surface">#FF1E293B</color>
+
+    <color name="gray">#FF64748B</color>
+    <color name="gray_light">#FF94A3B8</color>
+    <color name="bg">#FFF8F9FC</color>
+    <color name="border">#FFE2E8F0</color>
+
+    <color name="sidebar_bg">#FF0F172A</color>
+
+    <color name="welcome_banner_start">#FF4A6CF7</color>
+    <color name="welcome_banner_end">#FF2563EB</color>
 </resources>

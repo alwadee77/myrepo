@@ -3,10 +3,10 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="primary">#FF7C3AED</color>
-    <color name="primary_dark">#FF5B21D6</color>
-    <color name="primary_light">#FFF3E8FF</color>
-    <color name="primary_bg">#FFA78BFA</color>
+    <color name="primary">#FF62BD8D</color>
+    <color name="primary_dark">#FF4A9E6E</color>
+    <color name="primary_light">#FFE8F5EE</color>
+    <color name="primary_bg">#FFA8E0C0</color>
 
     <color name="secondary">#FF64748B</color>
     <color name="secondary_light">#FFF1F5F9</color>

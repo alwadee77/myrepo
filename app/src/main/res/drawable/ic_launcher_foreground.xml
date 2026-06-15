@@ -4,16 +4,20 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- Head -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M34,40 L54,40 L54,48 L42,48 L42,52 L52,52 L52,60 L42,60 L42,64 L54,64 L54,72 L34,72Z" />
+        android:pathData="M54,30m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
+    <!-- Body -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M58,40 L72,40 C75.3,40 78,42.7 78,46 L78,52 C78,55.3 75.3,58 72,58 L66,58 L66,72 L58,72 Z M66,48 L66,52 L70,52 L70,48Z" />
+        android:pathData="M30,80 C30,66 48,60 54,60 C60,60 78,66 78,80 L78,88 L30,88 Z" />
+    <!-- Checkmark -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M54,30 C54,30 38,46 30,54 C38,62 54,78 54,78"
-        android:strokeWidth="3"
-        android:strokeColor="#FFFFFF"
-        android:fillAlpha="0" />
+        android:fillColor="#00000000"
+        android:strokeColor="#62BD8D"
+        android:strokeWidth="5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M82,28 L90,36 L102,20" />
 </vector>

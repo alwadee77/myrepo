@@ -8,8 +8,14 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="gray">#FF666666</color>
+    <color name="light_gray">#FFF5F5F5</color>
 
     <color name="primary">#FF7C3AED</color>
     <color name="primary_dark">#FF5B21D6</color>
+    <color name="primary_light">#FFA78BFA</color>
     <color name="accent">#FF7C3AED</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="on_surface">#FF1A1A1A</color>
+    <color name="error">#FFDC2626</color>
+    <color name="success">#FF16A34A</color>
 </resources>

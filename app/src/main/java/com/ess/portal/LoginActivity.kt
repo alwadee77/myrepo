@@ -2,6 +2,7 @@ package com.ess.portal
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -43,8 +44,12 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+
             progressBar.visibility = android.view.View.VISIBLE
             btnLogin.isEnabled = false
+            btnLogin.text = "Signing in..."
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
@@ -58,6 +63,7 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         progressBar.visibility = android.view.View.GONE
                         btnLogin.isEnabled = true
+                        btnLogin.text = "Sign In"
 
                         if (result != null) {
                             prefs.setLoggedIn(true)
@@ -77,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         progressBar.visibility = android.view.View.GONE
                         btnLogin.isEnabled = true
+                        btnLogin.text = "Sign In"
                         Toast.makeText(
                             this@LoginActivity,
                             "Connection error: ${e.message}",

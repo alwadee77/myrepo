@@ -45,22 +45,31 @@ class DashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, AttendanceActivity::class.java))
         }
         findViewById<android.view.View>(R.id.btn_profile).setOnClickListener {
-            Toast.makeText(this, "Profile coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
         findViewById<android.view.View>(R.id.btn_time_off).setOnClickListener {
-            Toast.makeText(this, "Time Off coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, TimeOffActivity::class.java))
         }
         findViewById<android.view.View>(R.id.btn_overtime).setOnClickListener {
-            Toast.makeText(this, "Overtime coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PlaceholderActivity::class.java).apply {
+                putExtra("title", "Overtime")
+                putExtra("message", "Overtime requests will be displayed here.")
+            })
         }
         findViewById<android.view.View>(R.id.btn_hr_requests).setOnClickListener {
-            Toast.makeText(this, "HR Requests coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PlaceholderActivity::class.java).apply {
+                putExtra("title", "HR Requests")
+                putExtra("message", "HR requests for letters, assets, visa, etc. will appear here.")
+            })
         }
         findViewById<android.view.View>(R.id.btn_expenses).setOnClickListener {
-            Toast.makeText(this, "Expenses coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ExpensesActivity::class.java))
         }
         findViewById<android.view.View>(R.id.btn_contract).setOnClickListener {
-            Toast.makeText(this, "Contract & Salary coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, PlaceholderActivity::class.java).apply {
+                putExtra("title", "Contract & Salary")
+                putExtra("message", "Your contract details and salary information will be displayed here.")
+            })
         }
     }
 

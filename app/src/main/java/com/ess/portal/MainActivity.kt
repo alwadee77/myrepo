@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadPortal() {
-        val portalUrl = "${prefs.getUrl()}/my/hr/home"
+        val portalUrl = "${prefs.getUrl()}/my/hr"
         webView.loadUrl(portalUrl)
     }
 

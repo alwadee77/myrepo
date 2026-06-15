@@ -23,11 +23,13 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          # This tells the setup plugin exactly where to find your Gradle wrapper settings
+          build-root-directory: ./android
 
       - name: Build Debug APK
-        # This switches execution into your Capacitor android directory and runs the local Gradle wrapper
+        working-directory: ./android
         run: |
-          cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
@@ -35,5 +37,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ess-portal-debug
-          # This points to the correct destination folder where Capacitor saves the file
           path: android/app/build/outputs/apk/debug/app-debug.apk

@@ -69,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
                             prefs.setLoggedIn(true)
                             prefs.setUid(session.uid)
                             prefs.setSessionId(session.sessionId)
+                            prefs.setLang(session.lang)
                             startActivity(
                                 Intent(this@LoginActivity, DashboardActivity::class.java)
                             )

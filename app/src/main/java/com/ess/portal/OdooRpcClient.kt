@@ -11,7 +11,7 @@ object OdooRpcClient {
 
     private const val TAG = "OdooRpc"
 
-    data class Session(val uid: Int, val sessionId: String)
+    data class Session(val uid: Int, val sessionId: String, val lang: String = "")
 
     private var currentSession: Session? = null
     private var empId: Int = 0
@@ -55,7 +55,9 @@ object OdooRpcClient {
             if (uid == 0) return null
 
             val sessionId = extractSessionId(conn)
-            Session(uid, sessionId).also { currentSession = it }
+            val userContext = result.optJSONObject("user_context")
+            val lang = userContext?.optString("lang", "") ?: ""
+            Session(uid, sessionId, lang).also { currentSession = it }
         } finally {
             conn.disconnect()
         }

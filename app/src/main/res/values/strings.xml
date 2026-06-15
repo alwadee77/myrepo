@@ -1,4 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ESS Portal</string>
+
+    <!-- Dashboard Toolbar -->
+    <string name="toolbar_title_dashboard">Workplace Hub</string>
+
+    <!-- Welcome Banner -->
+    <string name="banner_subtitle">Self-Service Portal</string>
+    <string name="banner_greeting">Welcome back,</string>
+    <string name="banner_subtext">Manage your corporate records and workspace requests</string>
+
+    <!-- Employee Card -->
+    <string name="employee_name_placeholder">Employee!</string>
+    <string name="employee_name_detail_placeholder">Employee Name</string>
+    <string name="employee_job_placeholder">Job Position</string>
+    <string name="badge_in">IN</string>
+    <string name="badge_out">OUT</string>
+
+    <!-- Section Header -->
+    <string name="section_dashboard">Dashboard</string>
+
+    <!-- Menu Cards -->
+    <string name="menu_my_profile">My Profile</string>
+    <string name="menu_my_profile_sub">View / edit your details</string>
+    <string name="menu_attendance">Attendance</string>
+    <string name="menu_attendance_sub">Check-ins today</string>
+    <string name="menu_time_off">Time Off</string>
+    <string name="menu_time_off_sub">Apply &amp; track requests</string>
+    <string name="menu_overtime">Overtime</string>
+    <string name="menu_overtime_sub">Submit overtime requests</string>
+    <string name="menu_hr_requests">HR Requests</string>
+    <string name="menu_hr_requests_sub">Letters, assets, visa…</string>
+    <string name="menu_expenses">Expenses</string>
+    <string name="menu_expenses_sub">Submit &amp; track reimbursement</string>
+    <string name="menu_contract">Contract &amp; Salary</string>
+    <string name="menu_contract_sub">View your HR profile</string>
+
+    <!-- Count Badge Placeholder -->
+    <string name="count_zero">0</string>
+
+    <!-- Today's Overview -->
+    <string name="section_today_overview">Today&#8217;s Overview</string>
+    <string name="overview_attendance_label">Attendance</string>
+    <string name="overview_value_placeholder">--</string>
+    <string name="overview_today">Today</string>
+    <string name="overview_leave_bal">Leave Bal.</string>
+    <string name="overview_pending">Pending</string>
+
+    <!-- Status Strings -->
+    <string name="status_clocked_in">Clocked In</string>
+    <string name="status_completed">Completed</string>
+    <string name="status_not_clocked_in">Not clocked in</string>
+    <string name="hours_format">%1$dh %2$dm</string>
+    <string name="hours_zero">0h 0m</string>
+    <string name="greeting_format">Welcome back, %1$s!</string>
+    <string name="employee_default">Employee</string>
+
+    <!-- Logout Dialog -->
+    <string name="logout_title">Logout</string>
+    <string name="logout_message">Are you sure you want to logout?</string>
+    <string name="logout_yes">Yes</string>
+    <string name="logout_no">No</string>
+
+    <!-- Error -->
+    <string name="error_loading">Error: %1$s</string>
 </resources>

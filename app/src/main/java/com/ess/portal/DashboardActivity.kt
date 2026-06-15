@@ -1,5 +1,6 @@
 package com.ess.portal
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -23,15 +24,20 @@ class DashboardActivity : AppCompatActivity() {
 
     private lateinit var prefs: AppPreferences
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dashboard)
+    override fun attachBaseContext(newBase: Context) {
+        val p = AppPreferences(newBase)
+        super.attachBaseContext(LocaleUtil.applyLocale(newBase, p.getLang()))
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         prefs = AppPreferences(this)
 
         if (OdooRpcClient.getSession() == null && prefs.isLoggedIn()) {
-            OdooRpcClient.setSession(OdooRpcClient.Session(prefs.getUid(), prefs.getSessionId()))
+            OdooRpcClient.setSession(OdooRpcClient.Session(prefs.getUid(), prefs.getSessionId(), prefs.getLang()))
         }
+
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_dashboard)
 
         setSupportActionBar(findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -93,12 +99,12 @@ class DashboardActivity : AppCompatActivity() {
                     if (employees != null && employees.length() > 0) {
                         val emp = employees.getJSONObject(0)
                         OdooRpcClient.setEmployeeId(emp.optInt("id", 0))
-                        val name = emp.optString("name", "Employee")
+                        val name = emp.optString("name", getString(R.string.employee_default))
                         findViewById<TextView>(R.id.tv_employee_name).text = name
                         findViewById<TextView>(R.id.tv_employee_name_detail).text = name
-                        findViewById<TextView>(R.id.tv_greeting).text = "Welcome back, $name!"
+                        findViewById<TextView>(R.id.tv_greeting).text = getString(R.string.greeting_format, name)
                         val job = emp.optString("job_title", "")
-                        findViewById<TextView>(R.id.tv_employee_job).text = if (job.isNotEmpty()) job else "Employee"
+                        findViewById<TextView>(R.id.tv_employee_job).text = if (job.isNotEmpty()) job else getString(R.string.employee_default)
                     }
                 }
 
@@ -123,30 +129,30 @@ class DashboardActivity : AppCompatActivity() {
 
                         if (checkOut == JSONObject.NULL) {
                             badge.visibility = android.view.View.VISIBLE
-                            badge.text = "IN"
+                            badge.text = getString(R.string.badge_in)
                             badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
                             badge.setBackgroundResource(R.drawable.bg_icon_green)
-                            findViewById<TextView>(R.id.tv_today_status).text = "Clocked In"
+                            findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_clocked_in)
                             findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
                         } else {
                             badge.visibility = android.view.View.VISIBLE
-                            badge.text = "OUT"
+                            badge.text = getString(R.string.badge_out)
                             badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
                             badge.setBackgroundResource(R.drawable.bg_icon_red_light)
-                            findViewById<TextView>(R.id.tv_today_status).text = "Completed"
+                            findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_completed)
                             findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
                         }
 
                         val totalSeconds = calculateWorkedSeconds(attendances)
                         val hours = totalSeconds / 3600
                         val mins = (totalSeconds % 3600) / 60
-                        findViewById<TextView>(R.id.tv_worked_hours).text = "${hours}h ${mins}m"
+                        findViewById<TextView>(R.id.tv_worked_hours).text = getString(R.string.hours_format, hours, mins)
 
                         findViewById<TextView>(R.id.tv_attendance_count).text = "${if (checkOut == JSONObject.NULL) 1 else 0}"
                     } else {
-                        findViewById<TextView>(R.id.tv_today_status).text = "Not clocked in"
+                        findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_not_clocked_in)
                         findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.error))
-                        findViewById<TextView>(R.id.tv_worked_hours).text = "0h 0m"
+                        findViewById<TextView>(R.id.tv_worked_hours).text = getString(R.string.hours_zero)
                         findViewById<TextView>(R.id.tv_attendance_count).text = "0"
                     }
                 }
@@ -190,7 +196,7 @@ class DashboardActivity : AppCompatActivity() {
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@DashboardActivity, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@DashboardActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -244,15 +250,15 @@ class DashboardActivity : AppCompatActivity() {
 
     private fun showLogoutDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Logout")
-            .setMessage("Are you sure you want to logout?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.logout_title))
+            .setMessage(getString(R.string.logout_message))
+            .setPositiveButton(getString(R.string.logout_yes)) { _, _ ->
                 OdooRpcClient.setSession(null)
                 prefs.logout()
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton(getString(R.string.logout_no), null)
             .show()
     }
 }

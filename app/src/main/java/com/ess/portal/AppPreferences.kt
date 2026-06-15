@@ -23,6 +23,9 @@ class AppPreferences(context: Context) {
     fun getSessionId(): String = prefs.getString("session_id", "") ?: ""
     fun setSessionId(sid: String) = prefs.edit().putString("session_id", sid).apply()
 
+    fun getLang(): String = prefs.getString("lang", "") ?: ""
+    fun setLang(lang: String) = prefs.edit().putString("lang", lang).apply()
+
     fun isConfigured(): Boolean = getUrl().isNotEmpty() && getDb().isNotEmpty()
 
     fun logout() {
@@ -30,6 +33,7 @@ class AppPreferences(context: Context) {
             putBoolean("logged_in", false)
             putInt("uid", 0)
             putString("session_id", "")
+            putString("lang", "")
             apply()
         }
     }

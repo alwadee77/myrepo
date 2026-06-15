@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">بوابة الموظفين</string>
+
+    <!-- Dashboard Toolbar -->
+    <string name="toolbar_title_dashboard">مركز العمل</string>
+
+    <!-- Welcome Banner -->
+    <string name="banner_subtitle">بوابة الخدمة الذاتية</string>
+    <string name="banner_greeting">مرحباً بعودتك،</string>
+    <string name="banner_subtext">إدارة سجلاتك المؤسسية وطلبات العمل</string>
+
+    <!-- Employee Card -->
+    <string name="employee_name_placeholder">موظف!</string>
+    <string name="employee_name_detail_placeholder">اسم الموظف</string>
+    <string name="employee_job_placeholder">المسمى الوظيفي</string>
+    <string name="badge_in">داخل</string>
+    <string name="badge_out">خارج</string>
+
+    <!-- Section Header -->
+    <string name="section_dashboard">لوحة التحكم</string>
+
+    <!-- Menu Cards -->
+    <string name="menu_my_profile">ملفي الشخصي</string>
+    <string name="menu_my_profile_sub">عرض / تعديل بياناتك</string>
+    <string name="menu_attendance">الحضور</string>
+    <string name="menu_attendance_sub">تسجيلات اليوم</string>
+    <string name="menu_time_off">الإجازات</string>
+    <string name="menu_time_off_sub">تقديم ومتابعة الطلبات</string>
+    <string name="menu_overtime">العمل الإضافي</string>
+    <string name="menu_overtime_sub">تقديم طلبات العمل الإضافي</string>
+    <string name="menu_hr_requests">طلبات الموارد البشرية</string>
+    <string name="menu_hr_requests_sub">خطابات، أصول، تأشيرة…</string>
+    <string name="menu_expenses">المصروفات</string>
+    <string name="menu_expenses_sub">تقديم ومتابعة التعويضات</string>
+    <string name="menu_contract">العقد والراتب</string>
+    <string name="menu_contract_sub">عرض ملفك في الموارد البشرية</string>
+
+    <!-- Count Badge Placeholder -->
+    <string name="count_zero">0</string>
+
+    <!-- Today's Overview -->
+    <string name="section_today_overview">نظرة اليوم</string>
+    <string name="overview_attendance_label">الحضور</string>
+    <string name="overview_value_placeholder">--</string>
+    <string name="overview_today">اليوم</string>
+    <string name="overview_leave_bal">رصيد الإجازات</string>
+    <string name="overview_pending">قيد الانتظار</string>
+
+    <!-- Status Strings -->
+    <string name="status_clocked_in">مسجل الدخول</string>
+    <string name="status_completed">مكتمل</string>
+    <string name="status_not_clocked_in">غير مسجل</string>
+    <string name="hours_format">%1$dس %2$dد</string>
+    <string name="hours_zero">0س 0د</string>
+    <string name="greeting_format">مرحباً بعودتك، %1$s!</string>
+    <string name="employee_default">موظف</string>
+
+    <!-- Logout Dialog -->
+    <string name="logout_title">تسجيل الخروج</string>
+    <string name="logout_message">هل أنت متأكد من تسجيل الخروج؟</string>
+    <string name="logout_yes">نعم</string>
+    <string name="logout_no">لا</string>
+
+    <!-- Error -->
+    <string name="error_loading">خطأ: %1$s</string>
+</resources>

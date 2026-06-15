@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:title="Workplace Hub"
+        app:title="@string/toolbar_title_dashboard"
         app:titleTextColor="@android:color/white" />
 
     <ScrollView
@@ -36,7 +36,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Self-Service Portal"
+                    android:text="@string/banner_subtitle"
                     android:textSize="11sp"
                     android:textColor="@android:color/white"
                     android:alpha="0.8"
@@ -47,7 +47,7 @@
                     android:id="@+id/tv_greeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Welcome back,"
+                    android:text="@string/banner_greeting"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
@@ -57,7 +57,7 @@
                     android:id="@+id/tv_employee_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Employee!"
+                    android:text="@string/employee_name_placeholder"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
@@ -66,7 +66,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manage your corporate records and workspace requests"
+                    android:text="@string/banner_subtext"
                     android:textSize="12sp"
                     android:textColor="@android:color/white"
                     android:alpha="0.7"
@@ -110,7 +110,7 @@
                             android:id="@+id/tv_employee_name_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Employee Name"
+                            android:text="@string/employee_name_detail_placeholder"
                             android:textSize="17sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface" />
@@ -119,7 +119,7 @@
                             android:id="@+id/tv_employee_job"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Job Position"
+                            android:text="@string/employee_job_placeholder"
                             android:textSize="13sp"
                             android:textColor="@color/gray"
                             android:layout_marginTop="2dp" />
@@ -131,7 +131,7 @@
                         android:layout_height="28dp"
                         android:gravity="center"
                         android:paddingHorizontal="12dp"
-                        android:text="OUT"
+                        android:text="@string/badge_out"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         android:textColor="@color/error"
@@ -144,7 +144,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dashboard"
+                android:text="@string/section_dashboard"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
@@ -194,7 +194,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="My Profile"
+                            android:text="@string/menu_my_profile"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -203,7 +203,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="View / edit your details"
+                            android:text="@string/menu_my_profile_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -259,16 +259,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Attendance"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                                android:text="@string/menu_attendance"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/on_surface"
+                                android:layout_marginTop="8dp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Check-ins today"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/menu_attendance_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -334,7 +334,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Time Off"
+                            android:text="@string/menu_time_off"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -343,7 +343,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Apply &amp; track requests"
+                            android:text="@string/menu_time_off_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -399,7 +399,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Overtime"
+                            android:text="@string/menu_overtime"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -408,7 +408,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Submit overtime requests"
+                            android:text="@string/menu_overtime_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -474,7 +474,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="HR Requests"
+                            android:text="@string/menu_hr_requests"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -483,7 +483,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Letters, assets, visa..."
+                            android:text="@string/menu_hr_requests_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -539,7 +539,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Expenses"
+                            android:text="@string/menu_expenses"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -548,7 +548,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Submit &amp; track reimbursement"
+                            android:text="@string/menu_expenses_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -597,7 +597,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Contract &amp; Salary"
+                            android:text="@string/menu_contract"
                             android:textSize="13sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
@@ -606,7 +606,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="View your HR profile"
+                            android:text="@string/menu_contract_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
                             android:layout_marginTop="2dp" />
@@ -626,7 +626,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today's Overview"
+                android:text="@string/section_today_overview"
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
@@ -663,7 +663,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Attendance"
+                            android:text="@string/overview_attendance_label"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface" />
@@ -708,7 +708,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Today"
+                                android:text="@string/overview_today"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray"
                                 android:layout_marginTop="4dp" />
@@ -733,7 +733,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Leave Bal."
+                                android:text="@string/overview_leave_bal"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray"
                                 android:layout_marginTop="4dp" />
@@ -758,7 +758,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pending"
+                                android:text="@string/overview_pending"
                                 android:textSize="11sp"
                                 android:textColor="@color/gray"
                                 android:layout_marginTop="4dp" />

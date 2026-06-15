@@ -30,37 +30,37 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp"
+                android:padding="28dp"
                 android:background="@drawable/bg_welcome_banner">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/banner_subtitle"
-                    android:textSize="11sp"
+                    android:textSize="12sp"
                     android:textColor="@android:color/white"
-                    android:alpha="0.8"
+                    android:alpha="0.85"
                     android:textStyle="bold"
-                    android:letterSpacing="0.05" />
+                    android:letterSpacing="0.08" />
 
                 <TextView
                     android:id="@+id/tv_greeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/banner_greeting"
-                    android:textSize="24sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"
-                    android:layout_marginTop="4dp" />
+                    android:layout_marginTop="6dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/banner_subtext"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:textColor="@android:color/white"
-                    android:alpha="0.7"
-                    android:layout_marginTop="6dp" />
+                    android:alpha="0.75"
+                    android:layout_marginTop="8dp" />
             </LinearLayout>
 
             <!-- Employee Card -->
@@ -69,8 +69,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="-32dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="8dp"
+                app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@android:color/white">
 
                 <LinearLayout
@@ -78,30 +79,31 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <ImageView
                         android:id="@+id/iv_avatar"
-                        android:layout_width="56dp"
-                        android:layout_height="56dp"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/ic_logo"
                         android:contentDescription="Avatar"
                         android:background="@drawable/bg_icon_purple"
-                        android:padding="8dp" />
+                        android:padding="10dp" />
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="14dp">
+                        android:layout_marginStart="16dp">
 
                         <TextView
                             android:id="@+id/tv_employee_name_detail"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/employee_name_detail_placeholder"
-                            android:textSize="17sp"
+                            android:textSize="18sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface" />
 
@@ -112,17 +114,17 @@
                             android:text="@string/employee_job_placeholder"
                             android:textSize="13sp"
                             android:textColor="@color/gray"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="3dp" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/tv_attendance_status_badge"
                         android:layout_width="wrap_content"
-                        android:layout_height="28dp"
+                        android:layout_height="30dp"
                         android:gravity="center"
-                        android:paddingHorizontal="12dp"
+                        android:paddingHorizontal="14dp"
                         android:text="@string/badge_out"
-                        android:textSize="11sp"
+                        android:textSize="12sp"
                         android:textStyle="bold"
                         android:textColor="@color/error"
                         android:background="@drawable/bg_icon_red_light"
@@ -130,19 +132,19 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Quick Actions Header -->
+            <!-- Dashboard Section Header -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/section_dashboard"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
-                android:letterSpacing="0.05"
+                android:letterSpacing="0.08"
                 android:textAllCaps="true"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="28dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="14dp" />
 
             <!-- Menu Grid - Row 1 -->
             <LinearLayout
@@ -158,9 +160,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -171,24 +174,24 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <ImageView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:src="@drawable/ic_logo"
                             android:contentDescription="Profile"
                             android:background="@drawable/bg_icon_green"
-                            android:padding="10dp" />
+                            android:padding="11dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_my_profile"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -196,7 +199,7 @@
                             android:text="@string/menu_my_profile_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -206,9 +209,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -219,29 +223,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <FrameLayout
-                            android:layout_width="44dp"
-                            android:layout_height="44dp">
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <TextView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:gravity="center"
                                 android:text="&#9201;"
-                                android:textSize="20sp"
+                                android:textSize="22sp"
                                 android:background="@drawable/bg_icon_purple" />
 
                             <TextView
                                 android:id="@+id/tv_attendance_count"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="top|end"
                                 android:gravity="center"
                                 android:background="@drawable/bg_badge"
                                 android:text="0"
-                                android:textSize="9sp"
+                                android:textSize="10sp"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -249,19 +253,19 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                                android:text="@string/menu_attendance"
-                                android:textSize="13sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/on_surface"
-                                android:layout_marginTop="8dp" />
+                            android:text="@string/menu_attendance"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/on_surface"
+                            android:layout_marginTop="10dp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/menu_attendance_sub"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/menu_attendance_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -273,7 +277,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2"
                 android:paddingHorizontal="16dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="16dp">
 
                 <!-- Time Off -->
                 <androidx.cardview.widget.CardView
@@ -281,9 +285,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -294,29 +299,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <FrameLayout
-                            android:layout_width="44dp"
-                            android:layout_height="44dp">
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <TextView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:gravity="center"
                                 android:text="&#128197;"
-                                android:textSize="20sp"
+                                android:textSize="22sp"
                                 android:background="@drawable/bg_icon_green" />
 
                             <TextView
                                 android:id="@+id/tv_time_off_count"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="top|end"
                                 android:gravity="center"
                                 android:background="@drawable/bg_badge"
                                 android:text="0"
-                                android:textSize="9sp"
+                                android:textSize="10sp"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -325,10 +330,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_time_off"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -336,7 +341,7 @@
                             android:text="@string/menu_time_off_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -346,9 +351,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -359,29 +365,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <FrameLayout
-                            android:layout_width="44dp"
-                            android:layout_height="44dp">
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <TextView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:gravity="center"
                                 android:text="&#9203;"
-                                android:textSize="20sp"
+                                android:textSize="22sp"
                                 android:background="@drawable/bg_icon_blue" />
 
                             <TextView
                                 android:id="@+id/tv_overtime_count"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="top|end"
                                 android:gravity="center"
                                 android:background="@drawable/bg_badge"
                                 android:text="0"
-                                android:textSize="9sp"
+                                android:textSize="10sp"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -390,10 +396,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_overtime"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -401,7 +407,7 @@
                             android:text="@string/menu_overtime_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
@@ -413,7 +419,7 @@
                 android:orientation="horizontal"
                 android:weightSum="2"
                 android:paddingHorizontal="16dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="16dp">
 
                 <!-- HR Requests -->
                 <androidx.cardview.widget.CardView
@@ -421,9 +427,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -434,29 +441,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <FrameLayout
-                            android:layout_width="44dp"
-                            android:layout_height="44dp">
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <TextView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:gravity="center"
                                 android:text="&#128172;"
-                                android:textSize="20sp"
+                                android:textSize="22sp"
                                 android:background="@drawable/bg_icon_purple" />
 
                             <TextView
                                 android:id="@+id/tv_hr_requests_count"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="top|end"
                                 android:gravity="center"
                                 android:background="@drawable/bg_badge"
                                 android:text="0"
-                                android:textSize="9sp"
+                                android:textSize="10sp"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -465,10 +472,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_hr_requests"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -476,7 +483,7 @@
                             android:text="@string/menu_hr_requests_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -486,9 +493,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -499,29 +507,29 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <FrameLayout
-                            android:layout_width="44dp"
-                            android:layout_height="44dp">
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
 
                             <TextView
-                                android:layout_width="44dp"
-                                android:layout_height="44dp"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
                                 android:gravity="center"
                                 android:text="&#128179;"
-                                android:textSize="20sp"
+                                android:textSize="22sp"
                                 android:background="@drawable/bg_icon_green" />
 
                             <TextView
                                 android:id="@+id/tv_expense_count"
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="top|end"
                                 android:gravity="center"
                                 android:background="@drawable/bg_badge"
                                 android:text="0"
-                                android:textSize="9sp"
+                                android:textSize="10sp"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -530,10 +538,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_expenses"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -541,19 +549,19 @@
                             android:text="@string/menu_expenses_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>
 
-            <!-- Menu Grid - Row 4 (Contract only, centered) -->
+            <!-- Menu Grid - Row 4 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="2"
                 android:paddingHorizontal="16dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="16dp">
 
                 <!-- Contract & Salary -->
                 <androidx.cardview.widget.CardView
@@ -561,9 +569,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="6dp"
+                    app:cardUseCompatPadding="true"
                     app:cardBackgroundColor="@android:color/white"
                     android:clickable="true"
                     android:focusable="true"
@@ -574,24 +583,24 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="16dp">
+                        android:padding="20dp">
 
                         <TextView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:gravity="center"
                             android:text="&#128179;"
-                            android:textSize="20sp"
+                            android:textSize="22sp"
                             android:background="@drawable/bg_icon_blue" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/menu_contract"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface"
-                            android:layout_marginTop="8dp" />
+                            android:layout_marginTop="10dp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -599,7 +608,7 @@
                             android:text="@string/menu_contract_sub"
                             android:textSize="11sp"
                             android:textColor="@color/gray_light"
-                            android:layout_marginTop="2dp" />
+                            android:layout_marginTop="4dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -608,7 +617,7 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="8dp"
                     android:visibility="invisible" />
             </LinearLayout>
 
@@ -617,30 +626,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/section_today_overview"
-                android:textSize="11sp"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="@color/gray"
-                android:letterSpacing="0.05"
+                android:letterSpacing="0.08"
                 android:textAllCaps="true"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="28dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="14dp" />
 
             <!-- Attendance Summary Card -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginBottom="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
+                android:layout_marginBottom="28dp"
+                app:cardCornerRadius="18dp"
+                app:cardElevation="6dp"
+                app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@android:color/white">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="22dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -654,7 +664,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="@string/overview_attendance_label"
-                            android:textSize="15sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@color/on_surface" />
 
@@ -671,7 +681,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:background="@color/border"
-                        android:layout_marginBottom="16dp" />
+                        android:layout_marginBottom="20dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -691,7 +701,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/primary" />
 
@@ -699,9 +709,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/overview_today"
-                                android:textSize="11sp"
+                                android:textSize="12sp"
                                 android:textColor="@color/gray"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="6dp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -716,7 +726,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/info" />
 
@@ -724,9 +734,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/overview_leave_bal"
-                                android:textSize="11sp"
+                                android:textSize="12sp"
                                 android:textColor="@color/gray"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="6dp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -741,7 +751,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="--"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
                                 android:textColor="@color/success" />
 
@@ -749,9 +759,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/overview_pending"
-                                android:textSize="11sp"
+                                android:textSize="12sp"
                                 android:textColor="@color/gray"
-                                android:layout_marginTop="4dp" />
+                                android:layout_marginTop="6dp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

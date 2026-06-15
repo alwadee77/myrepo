@@ -11,8 +11,8 @@
     <color name="secondary">#FF64748B</color>
     <color name="secondary_light">#FFF1F5F9</color>
 
-    <color name="success">#FF10B981</color>
-    <color name="success_light">#FFDCFCE7</color>
+    <color name="success">#FF059669</color>
+    <color name="success_light">#FFA7F3D0</color>
 
     <color name="warning">#FFF59E0B</color>
     <color name="warning_light">#FFFEF3C7</color>

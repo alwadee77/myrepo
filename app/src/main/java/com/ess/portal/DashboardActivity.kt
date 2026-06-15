@@ -129,17 +129,17 @@ class DashboardActivity : AppCompatActivity() {
                         if (checkOut == JSONObject.NULL) {
                             badge.visibility = android.view.View.VISIBLE
                             badge.text = getString(R.string.badge_in)
-                            badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
-                            badge.setBackgroundResource(R.drawable.bg_icon_green)
+                            badge.setTextColor(android.graphics.Color.WHITE)
+                            badge.setBackgroundResource(R.drawable.bg_badge_green)
                             findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_clocked_in)
                             findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
                         } else {
                             badge.visibility = android.view.View.VISIBLE
                             badge.text = getString(R.string.badge_out)
-                            badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
+                            badge.setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.error))
                             badge.setBackgroundResource(R.drawable.bg_icon_red_light)
                             findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_completed)
-                            findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.gray))
+                            findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.on_surface))
                         }
 
                         val totalSeconds = calculateWorkedSeconds(attendances)

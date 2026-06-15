@@ -20,6 +20,6 @@ class AppPreferences(context: Context) {
     fun isConfigured(): Boolean = getUrl().isNotEmpty() && getDb().isNotEmpty()
 
     fun logout() {
-        prefs.edit().clear().apply()
+        prefs.edit().putBoolean("logged_in", false).apply()
     }
 }

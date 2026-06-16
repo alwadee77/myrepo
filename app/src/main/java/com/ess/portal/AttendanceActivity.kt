@@ -437,55 +437,68 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val ctx = this@AttendanceActivity
+                val log = StringBuilder()
 
-                // 1. Write portal_comment to attendance record
-                OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
+                // Step 1: Write comment
+                val wrote = OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
+                log.append("1. Write comment: $wrote\n")
 
-                // 2. Fetch manager's partner_id for notification
-                var managerPartnerId = 0
-                try {
-                    val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
+                // Step 2a: Get employee_id from attendance
+                var empId = 0
+                val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
+                    args = JSONArray(listOf(
+                        JSONArray(listOf(attendanceId)),
+                        JSONArray(listOf("employee_id"))
+                    ))
+                ) as? JSONArray
+                empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
+                log.append("2. empId: $empId\n")
+
+                // Step 2b: Get manager employee id
+                var mgrEmpId = 0
+                if (empId > 0) {
+                    val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
                         args = JSONArray(listOf(
-                            JSONArray(listOf(attendanceId)),
-                            JSONArray(listOf("employee_id"))
+                            JSONArray(listOf(empId)),
+                            JSONArray(listOf("parent_id"))
                         ))
                     ) as? JSONArray
-                    val empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
-                    if (empId > 0) {
-                        val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                            args = JSONArray(listOf(
-                                JSONArray(listOf(empId)),
-                                JSONArray(listOf("parent_id"))
-                            ))
-                        ) as? JSONArray
-                        val mgrEmpId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
-                        if (mgrEmpId > 0) {
-                            val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                                args = JSONArray(listOf(
-                                    JSONArray(listOf(mgrEmpId)),
-                                    JSONArray(listOf("user_id"))
-                                ))
-                            ) as? JSONArray
-                            val userId = mgrResult?.optJSONObject(0)?.optJSONArray("user_id")?.optInt(0) ?: 0
-                            if (userId > 0) {
-                                val userResult = OdooRpcClient.callKw(baseUrl, db, "res.users", "read",
-                                    args = JSONArray(listOf(
-                                        JSONArray(listOf(userId)),
-                                        JSONArray(listOf("partner_id"))
-                                    ))
-                                ) as? JSONArray
-                                managerPartnerId = userResult?.optJSONObject(0)?.optJSONArray("partner_id")?.optInt(0) ?: 0
-                            }
-                        }
-                    }
-                } catch (_: Exception) {}
+                    mgrEmpId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
+                    log.append("3. mgrEmpId: $mgrEmpId\n")
+                }
 
-                // 3. Post to chatter with partner notification (sends email via Odoo mail server)
+                // Step 2c: Get manager's user_id
+                var mgrUserId = 0
+                if (mgrEmpId > 0) {
+                    val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
+                        args = JSONArray(listOf(
+                            JSONArray(listOf(mgrEmpId)),
+                            JSONArray(listOf("user_id"))
+                        ))
+                    ) as? JSONArray
+                    mgrUserId = mgrResult?.optJSONObject(0)?.optJSONArray("user_id")?.optInt(0) ?: 0
+                    log.append("4. mgrUserId: $mgrUserId\n")
+                }
+
+                // Step 2d: Get manager's partner_id
+                var managerPartnerId = 0
+                if (mgrUserId > 0) {
+                    val userResult = OdooRpcClient.callKw(baseUrl, db, "res.users", "read",
+                        args = JSONArray(listOf(
+                            JSONArray(listOf(mgrUserId)),
+                            JSONArray(listOf("partner_id"))
+                        ))
+                    ) as? JSONArray
+                    managerPartnerId = userResult?.optJSONObject(0)?.optJSONArray("partner_id")?.optInt(0) ?: 0
+                    log.append("5. managerPartnerId: $managerPartnerId\n")
+                }
+
+                // Step 3: message_post
                 if (managerPartnerId > 0) {
                     try {
-                        OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "message_post",
+                        val postResult = OdooRpcClient.callKw(
+                            baseUrl, db, "hr.attendance", "message_post",
                             args = JSONArray(listOf(JSONArray(listOf(attendanceId)))),
                             kwargs = JSONObject().apply {
                                 put("body", "\u270D\ufe0f Portal Comment: $comment")
@@ -494,16 +507,28 @@ class AttendanceActivity : AppCompatActivity() {
                                 put("partner_ids", JSONArray(listOf(managerPartnerId)))
                             }
                         )
-                    } catch (_: Exception) {}
+                        log.append("6. message_post result: $postResult\n")
+                    } catch (e: Exception) {
+                        log.append("6. message_post FAILED: ${e.message}\n")
+                    }
+                } else {
+                    log.append("6. SKIPPED — managerPartnerId=0\n")
                 }
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
-                    loadMonthAttendance()
+                    AlertDialog.Builder(this@AttendanceActivity)
+                        .setTitle("Debug Log")
+                        .setMessage(log.toString())
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
+                    AlertDialog.Builder(this@AttendanceActivity)
+                        .setTitle("FATAL ERROR")
+                        .setMessage(e.message)
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             }
         }

@@ -235,6 +235,11 @@ class AttendanceActivity : AppCompatActivity() {
     }
 
     private fun requestLocationAndToggle() {
+        val btn = findViewById<Button>(R.id.btn_attendance_action)
+        if (btn.text == getString(R.string.attendance_register_check_out)) {
+            toggleAttendance(null, null)
+            return
+        }
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
             return

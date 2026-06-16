@@ -27,7 +27,6 @@ import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import android.util.Log
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.atan2
@@ -205,33 +204,30 @@ class AttendanceActivity : AppCompatActivity() {
             hoursTv.setTextColor(0xFF64748B.toInt())
 
             val commentBtn = Button(this)
-            val btnLp = LinearLayout.LayoutParams(80, 80)
+            val btnLp = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
             btnLp.marginStart = 8
             btnLp.marginEnd = 4
             commentBtn.layoutParams = btnLp
-            commentBtn.text = if (comment.isNotEmpty()) "\u2705" else "\uD83D\uDCDD"
-            commentBtn.textSize = 18f
+            commentBtn.text = if (comment.isNotEmpty()) "\u2705 ${getString(R.string.comment_view)}" else "\uD83D\uDCDD ${getString(R.string.comment_add)}"
+            commentBtn.textSize = 13f
             commentBtn.setBackgroundResource(android.R.color.transparent)
             commentBtn.setOnClickListener {
                 showCommentDialog(attId, comment)
             }
 
+            if (isRtl) {
+                row.setLayoutDirection(View.LAYOUT_DIRECTION_RTL)
+            }
+            row.addView(dateTv)
+            row.addView(timeTv)
             val spacer = View(this)
             spacer.layoutParams = LinearLayout.LayoutParams(8, 1)
-
-            if (isRtl) {
-                row.addView(commentBtn)
-                row.addView(hoursTv)
-                row.addView(spacer)
-                row.addView(timeTv)
-                row.addView(dateTv)
-            } else {
-                row.addView(dateTv)
-                row.addView(timeTv)
-                row.addView(spacer)
-                row.addView(hoursTv)
-                row.addView(commentBtn)
-            }
+            row.addView(spacer)
+            row.addView(hoursTv)
+            row.addView(commentBtn)
 
             card.addView(row)
             recordsView.addView(card)
@@ -398,81 +394,13 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-
-                // 1. Write portal_comment to attendance record
                 OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
-
-                // 2. Post to Odoo chatter
-                OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "message_post",
-                    args = JSONArray(listOf(
-                        JSONArray(listOf(attendanceId)),
-                        JSONObject().apply {
-                            put("body", "\u270D\ufe0f Portal Comment: $comment")
-                            put("message_type", "comment")
-                            put("subtype_xmlid", "mail.mt_comment")
-                        }
-                    ))
-                )
-
-                // 3. Get employee's manager email
-                var recipientEmail = ""
-                try {
-                    val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
-                        args = JSONArray(listOf(
-                            JSONArray(listOf(attendanceId)),
-                            JSONArray(listOf("employee_id"))
-                        ))
-                    ) as? JSONArray
-                    val empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
-                    if (empId > 0) {
-                        val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                            args = JSONArray(listOf(
-                                JSONArray(listOf(empId)),
-                                JSONArray(listOf("parent_id"))
-                            ))
-                        ) as? JSONArray
-                        val mgrId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
-                        if (mgrId > 0) {
-                            val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                                args = JSONArray(listOf(
-                                    JSONArray(listOf(mgrId)),
-                                    JSONArray(listOf("work_email"))
-                                ))
-                            ) as? JSONArray
-                            recipientEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.w("Comment", "Could not fetch manager email", e)
-                }
-
-                // 4. Send email to manager via mail.mail
-                if (recipientEmail.isNotEmpty()) {
-                    try {
-                        val emailBody = "<div style=\"direction:ltr\"><p><b>Comment:</b></p><blockquote style=\"background:#f9f9f9;padding:10px;border-left:4px solid #007bff\">$comment</blockquote><hr/><p style=\"font-size:12px;color:#777\">Sent from ESS Portal App.</p></div>"
-                        val mailValues = JSONObject().apply {
-                            put("subject", "Attendance Review Request")
-                            put("body_html", emailBody)
-                            put("email_to", recipientEmail)
-                            put("auto_delete", false)
-                        }
-                        val mailId = OdooRpcClient.create(baseUrl, db, "mail.mail", mailValues)
-                        if (mailId != null && mailId > 0) {
-                            OdooRpcClient.callKw(baseUrl, db, "mail.mail", "send",
-                                args = JSONArray(listOf(JSONArray(listOf(mailId)))))
-                        }
-                    } catch (e: Exception) {
-                        Log.w("Comment", "Could not send email", e)
-                    }
-                }
-
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AttendanceActivity, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
                     loadMonthAttendance()
                 }
             } catch (e: Exception) {
-                Log.e("Comment", "Error saving comment", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
                 }

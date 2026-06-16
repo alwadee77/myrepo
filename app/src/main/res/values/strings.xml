@@ -83,6 +83,8 @@
     <string name="comment_sent">Comment sent to HR!</string>
     <string name="comment_failed">Failed to send comment</string>
     <string name="comment_empty_warn">Please enter a comment</string>
+    <string name="comment_add">Comment</string>
+    <string name="comment_view">View</string>
     <string name="cancel">Cancel</string>
 
     <!-- Attendance Screen -->

@@ -83,6 +83,8 @@
     <string name="comment_sent">تم إرسال التعليق!</string>
     <string name="comment_failed">فشل إرسال التعليق</string>
     <string name="comment_empty_warn">الرجاء إدخال تعليق</string>
+    <string name="comment_add">تعليق</string>
+    <string name="comment_view">عرض</string>
     <string name="cancel">إلغاء</string>
 
     <!-- Attendance Screen -->

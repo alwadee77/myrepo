@@ -535,7 +535,8 @@ class AttendanceActivity : AppCompatActivity() {
             }
         }
     }
-
+    }
+    
     private fun getManagerPartnerId(baseUrl: String, db: String, attendanceId: Int): Int? {
         return try {
             val attResult = OdooRpcClient.searchRead(

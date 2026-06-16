@@ -155,6 +155,7 @@ class DashboardActivity : AppCompatActivity() {
 
                         findViewById<TextView>(R.id.tv_attendance_count).text = "${attendances.length()}"
                     } else {
+                        findViewById<TextView>(R.id.tv_attendance_status_badge).visibility = android.view.View.GONE
                         findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_not_clocked_in)
                         findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.error))
                         findViewById<TextView>(R.id.tv_worked_hours).text = getString(R.string.hours_zero)

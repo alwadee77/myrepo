@@ -363,7 +363,7 @@ class AttendanceActivity : AppCompatActivity() {
         val phi2 = Math.toRadians(lat2)
         val deltaPhi = Math.toRadians(lat2 - lat1)
         val deltaLambda = Math.toRadians(lon2 - lon1)
-        val a = sin(deltaPhi / 2).pow(2) + cos(phi1) * cos(phi2) * sin(deltaLambda / 2).pow(2)
+        val a = sin(deltaPhi / 2) * sin(deltaPhi / 2) + cos(phi1) * cos(phi2) * sin(deltaLambda / 2) * sin(deltaLambda / 2)
         val c = 2 * atan2(sqrt(a), sqrt(1 - a))
         return R * c
     }

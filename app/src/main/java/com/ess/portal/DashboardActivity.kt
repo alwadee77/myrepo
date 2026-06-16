@@ -127,20 +127,15 @@ class DashboardActivity : AppCompatActivity() {
                 val attendances = attResult as? JSONArray
 
                 withContext(Dispatchers.Main) {
+                    findViewById<TextView>(R.id.tv_attendance_status_badge).visibility = android.view.View.GONE
                     if (attendances != null && attendances.length() > 0) {
                         val last = attendances.getJSONObject(0)
                         val checkOut = last.opt("check_out")
-                        val badge = findViewById<TextView>(R.id.tv_attendance_status_badge)
 
                         if (checkOut == JSONObject.NULL) {
-                            badge.visibility = android.view.View.VISIBLE
-                            badge.text = getString(R.string.badge_in)
-                            badge.setTextColor(android.graphics.Color.WHITE)
-                            badge.setBackgroundResource(R.drawable.bg_badge_green)
                             findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_clocked_in)
                             findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.success))
                         } else {
-                            badge.visibility = android.view.View.GONE
                             findViewById<TextView>(R.id.tv_today_status).text = getString(R.string.status_completed)
                             findViewById<TextView>(R.id.tv_today_status).setTextColor(ContextCompat.getColor(this@DashboardActivity, R.color.on_surface))
                         }

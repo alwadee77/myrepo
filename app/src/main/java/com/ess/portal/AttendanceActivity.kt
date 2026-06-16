@@ -83,7 +83,21 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val empId = OdooRpcClient.getEmployeeId()
+                var empId = OdooRpcClient.getEmployeeId()
+
+                if (empId == 0) {
+                    val uid = OdooRpcClient.getSession()?.uid ?: return@launch
+                    val empResult = OdooRpcClient.searchRead(
+                        baseUrl, db, "hr.employee",
+                        domain = JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))),
+                        fields = JSONArray(listOf("id"))
+                    )
+                    if (empResult != null && empResult.length() > 0) {
+                        empId = empResult.getJSONObject(0).optInt("id", 0)
+                        OdooRpcClient.setEmployeeId(empId)
+                    }
+                    if (empId == 0) return@launch
+                }
 
                 val today = getTodayDate()
                 val monthStart = "${today.substring(0, 7)}-01"
@@ -277,8 +291,20 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val empId = OdooRpcClient.getEmployeeId()
-                if (empId == 0) return@launch
+                var empId = OdooRpcClient.getEmployeeId()
+                if (empId == 0) {
+                    val uid = OdooRpcClient.getSession()?.uid ?: return@launch
+                    val empResult = OdooRpcClient.searchRead(
+                        baseUrl, db, "hr.employee",
+                        domain = JSONArray(listOf(JSONArray(listOf("user_id", "=", uid)))),
+                        fields = JSONArray(listOf("id"))
+                    )
+                    if (empResult != null && empResult.length() > 0) {
+                        empId = empResult.getJSONObject(0).optInt("id", 0)
+                        OdooRpcClient.setEmployeeId(empId)
+                    }
+                    if (empId == 0) return@launch
+                }
 
                 // Geofence check using GPS coordinates
                 if (latitude != null && longitude != null) {

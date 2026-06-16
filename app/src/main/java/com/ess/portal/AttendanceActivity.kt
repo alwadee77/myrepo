@@ -400,10 +400,56 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
+                val ctx = this@AttendanceActivity
+
+                // 1. Write portal_comment to attendance record
                 OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
+
+                // 2. Fetch employee and manager email
+                var recipientEmail = ""
+                try {
+                    val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
+                        args = JSONArray(listOf(
+                            JSONArray(listOf(attendanceId)),
+                            JSONArray(listOf("employee_id"))
+                        ))
+                    ) as? JSONArray
+                    val empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
+                    if (empId > 0) {
+                        val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
+                            args = JSONArray(listOf(
+                                JSONArray(listOf(empId)),
+                                JSONArray(listOf("parent_id"))
+                            ))
+                        ) as? JSONArray
+                        val mgrId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
+                        if (mgrId > 0) {
+                            val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
+                                args = JSONArray(listOf(
+                                    JSONArray(listOf(mgrId)),
+                                    JSONArray(listOf("work_email"))
+                                ))
+                            ) as? JSONArray
+                            recipientEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
+                        }
+                    }
+                } catch (_: Exception) {}
+
+                // 3. Send email from Android device
+                if (recipientEmail.isNotEmpty()) {
+                    val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
+                        data = android.net.Uri.parse("mailto:$recipientEmail")
+                        putExtra(android.content.Intent.EXTRA_SUBJECT, "Attendance Review Request - Comment")
+                        putExtra(android.content.Intent.EXTRA_TEXT, comment)
+                    }
+                    withContext(Dispatchers.Main) {
+                        ctx.startActivity(android.content.Intent.createChooser(intent, "Send Email"))
+                    }
+                }
+
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AttendanceActivity, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
                     loadMonthAttendance()
                 }
             } catch (e: Exception) {

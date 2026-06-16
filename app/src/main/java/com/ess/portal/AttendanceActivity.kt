@@ -486,15 +486,13 @@ class AttendanceActivity : AppCompatActivity() {
                 if (managerPartnerId > 0) {
                     try {
                         OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "message_post",
-                            args = JSONArray(listOf(
-                                JSONArray(listOf(attendanceId)),
-                                JSONObject().apply {
-                                    put("body", "\u270D\ufe0f Portal Comment: $comment")
-                                    put("message_type", "comment")
-                                    put("subtype_xmlid", "mail.mt_comment")
-                                    put("partner_ids", JSONArray(listOf(managerPartnerId)))
-                                }
-                            ))
+                            args = JSONArray(listOf(JSONArray(listOf(attendanceId)))),
+                            kwargs = JSONObject().apply {
+                                put("body", "\u270D\ufe0f Portal Comment: $comment")
+                                put("message_type", "comment")
+                                put("subtype_xmlid", "mail.mt_comment")
+                                put("partner_ids", JSONArray(listOf(managerPartnerId)))
+                            }
                         )
                     } catch (_: Exception) {}
                 }

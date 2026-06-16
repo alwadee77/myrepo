@@ -468,30 +468,34 @@ class AttendanceActivity : AppCompatActivity() {
                     log.append("3. mgrEmpId: $mgrEmpId\n")
                 }
 
-                // Step 2c: Get manager's user_id
-                var mgrUserId = 0
+                // Step 2c: Get manager's work_email directly (skip user_id chain)
+                var mgrEmail = ""
                 if (mgrEmpId > 0) {
                     val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
                         args = JSONArray(listOf(
                             JSONArray(listOf(mgrEmpId)),
-                            JSONArray(listOf("user_id"))
+                            JSONArray(listOf("work_email", "name"))
                         ))
                     ) as? JSONArray
-                    mgrUserId = mgrResult?.optJSONObject(0)?.optJSONArray("user_id")?.optInt(0) ?: 0
-                    log.append("4. mgrUserId: $mgrUserId\n")
+                    mgrEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
+                    log.append("4. mgrEmail: $mgrEmail\n")
                 }
 
-                // Step 2d: Get manager's partner_id
+                // Step 2d: Get manager's partner_id via res.partner email search
                 var managerPartnerId = 0
-                if (mgrUserId > 0) {
-                    val userResult = OdooRpcClient.callKw(baseUrl, db, "res.users", "read",
-                        args = JSONArray(listOf(
-                            JSONArray(listOf(mgrUserId)),
-                            JSONArray(listOf("partner_id"))
-                        ))
+                if (mgrEmail.isNotEmpty()) {
+                    val partnerResult = OdooRpcClient.callKw(
+                        baseUrl, db, "res.partner", "search_read",
+                        kwargs = JSONObject().apply {
+                            put("domain", JSONArray(listOf(
+                                JSONArray(listOf("email", "=", mgrEmail))
+                            )))
+                            put("fields", JSONArray(listOf("id", "email")))
+                            put("limit", 1)
+                        }
                     ) as? JSONArray
-                    managerPartnerId = userResult?.optJSONObject(0)?.optJSONArray("partner_id")?.optInt(0) ?: 0
-                    log.append("5. managerPartnerId: $managerPartnerId\n")
+                    managerPartnerId = partnerResult?.optJSONObject(0)?.optInt("id", 0) ?: 0
+                    log.append("5. managerPartnerId via email: $managerPartnerId\n")
                 }
 
                 // Step 3: message_post

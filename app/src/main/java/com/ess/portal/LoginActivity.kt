@@ -13,6 +13,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
 
@@ -70,6 +72,19 @@ class LoginActivity : AppCompatActivity() {
                             prefs.setUid(session.uid)
                             prefs.setSessionId(session.sessionId)
                             prefs.setLang(session.lang)
+
+                            // Fetch employee ID immediately
+                            try {
+                                val empResult = OdooRpcClient.searchRead(
+                                    prefs.getUrl(), prefs.getDb(), "hr.employee",
+                                    domain = JSONArray(listOf(JSONArray(listOf("user_id", "=", session.uid)))),
+                                    fields = JSONArray(listOf("id"))
+                                )
+                                if (empResult != null && empResult.length() > 0) {
+                                    OdooRpcClient.setEmployeeId(empResult.getJSONObject(0).optInt("id", 0))
+                                }
+                            } catch (_: Exception) {}
+
                             startActivity(
                                 Intent(this@LoginActivity, DashboardActivity::class.java)
                             )

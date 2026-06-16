@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -419,11 +420,33 @@ class AttendanceActivity : AppCompatActivity() {
         return "${cal.get(Calendar.YEAR)}-${String.format("%02d", cal.get(Calendar.MONTH) + 1)}-${String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))}"
     }
 
+    private fun utcToSaudi(dt: String): Date? {
+        return try {
+            val utcFmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+            utcFmt.timeZone = TimeZone.getTimeZone("UTC")
+            utcFmt.parse(dt)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun formatTime(dt: String): String {
+        val date = utcToSaudi(dt)
+        if (date != null) {
+            val saudiFmt = SimpleDateFormat("HH:mm", Locale.US)
+            saudiFmt.timeZone = TimeZone.getTimeZone("Asia/Riyadh")
+            return saudiFmt.format(date)
+        }
         return if (dt.length >= 16) dt.substring(11, 16) else dt
     }
 
     private fun formatDate(dt: String): String {
+        val date = utcToSaudi(dt)
+        if (date != null) {
+            val saudiFmt = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+            saudiFmt.timeZone = TimeZone.getTimeZone("Asia/Riyadh")
+            return saudiFmt.format(date)
+        }
         return if (dt.length >= 10) {
             val parts = dt.substring(0, 10).split("-")
             if (parts.size == 3) {

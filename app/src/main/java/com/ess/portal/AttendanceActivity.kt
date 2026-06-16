@@ -1,6 +1,8 @@
 package com.ess.portal
 
+import android.content.DialogInterface
 import android.content.Context
+import androidx.appcompat.app.AlertDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
@@ -419,7 +421,7 @@ class AttendanceActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.comment_title))
             .setView(input)
-            .setPositiveButton(getString(R.string.comment_send)) { _, _ ->
+            .setPositiveButton(getString(R.string.comment_send)) { _: DialogInterface, _: Int ->
                 val newComment = input.text.toString().trim()
                 if (newComment.isNotEmpty()) {
                     saveComment(attendanceId, newComment)

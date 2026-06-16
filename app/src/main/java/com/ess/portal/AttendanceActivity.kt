@@ -455,7 +455,7 @@ class AttendanceActivity : AppCompatActivity() {
                 empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
                 log.append("2. empId: $empId\n")
 
-                // Step 2b: Find HR department manager(s) + employees with users
+                // Step 2b: Find HR department employees — get partner_id via work_email
                 val hrManagerPartnerIds = JSONArray()
                 try {
                     val hrDeptResult = OdooRpcClient.callKw(
@@ -464,7 +464,7 @@ class AttendanceActivity : AppCompatActivity() {
                             put("domain", JSONArray(listOf(
                                 JSONArray(listOf("name", "ilike", "Human Resources"))
                             )))
-                            put("fields", JSONArray(listOf("id", "name", "manager_id")))
+                            put("fields", JSONArray(listOf("id", "name")))
                         }
                     ) as? JSONArray
                     log.append("3. HR departments found: ${hrDeptResult?.length() ?: 0}\n")
@@ -475,31 +475,36 @@ class AttendanceActivity : AppCompatActivity() {
                             val deptName = dept.optString("name")
                             log.append("3a. Processing dept: $deptName (id=$deptId)\n")
 
-                            // Get all employees in this department who have a user_id
+                            // Get all employees in this department with a work_email
                             val hrEmpResult = OdooRpcClient.callKw(
                                 baseUrl, db, "hr.employee", "search_read",
                                 kwargs = JSONObject().apply {
                                     put("domain", JSONArray(listOf(
                                         JSONArray(listOf("department_id", "=", deptId)),
-                                        JSONArray(listOf("user_id", "!=", false))
+                                        JSONArray(listOf("work_email", "!=", false))
                                     )))
-                                    put("fields", JSONArray(listOf("id", "name", "user_id")))
+                                    put("fields", JSONArray(listOf("id", "name", "work_email")))
                                 }
                             ) as? JSONArray
-                            log.append("3b. HR employees with users: ${hrEmpResult?.length() ?: 0}\n")
+                            log.append("3b. HR employees with work_email: ${hrEmpResult?.length() ?: 0}\n")
 
                             if (hrEmpResult != null) {
                                 for (j in 0 until hrEmpResult.length()) {
                                     val emp = hrEmpResult.optJSONObject(j) ?: continue
-                                    val userId = emp.optJSONArray("user_id")?.optInt(0) ?: 0
-                                    if (userId > 0) {
-                                        val userResult = OdooRpcClient.callKw(baseUrl, db, "res.users", "read",
-                                            args = JSONArray(listOf(
-                                                JSONArray(listOf(userId)),
-                                                JSONArray(listOf("partner_id"))
-                                            ))
+                                    val email = emp.optString("work_email", "")
+                                    if (email.isNotEmpty()) {
+                                        // Find partner_id by email
+                                        val partnerResult = OdooRpcClient.callKw(
+                                            baseUrl, db, "res.partner", "search_read",
+                                            kwargs = JSONObject().apply {
+                                                put("domain", JSONArray(listOf(
+                                                    JSONArray(listOf("email", "=", email))
+                                                )))
+                                                put("fields", JSONArray(listOf("id")))
+                                                put("limit", 1)
+                                            }
                                         ) as? JSONArray
-                                        val partnerId = userResult?.optJSONObject(0)?.optJSONArray("partner_id")?.optInt(0) ?: 0
+                                        val partnerId = partnerResult?.optJSONObject(0)?.optInt("id", 0) ?: 0
                                         if (partnerId > 0) {
                                             // avoid duplicates
                                             var alreadyHas = false
@@ -511,8 +516,10 @@ class AttendanceActivity : AppCompatActivity() {
                                             }
                                             if (!alreadyHas) {
                                                 hrManagerPartnerIds.put(partnerId)
-                                                log.append("3c. Added: ${emp.optString("name")} (partner_id=$partnerId)\n")
+                                                log.append("3c. Added: ${emp.optString("name")} <$email> (partner_id=$partnerId)\n")
                                             }
+                                        } else {
+                                            log.append("3c. No partner for email: $email\n")
                                         }
                                     }
                                 }

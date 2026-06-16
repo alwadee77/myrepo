@@ -110,7 +110,7 @@ class AttendanceActivity : AppCompatActivity() {
                             JSONArray(listOf("employee_id", "=", empId)),
                             JSONArray(listOf("check_in", ">=", "$monthStart 00:00:00"))
                         )))
-                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours", "portal_comment")))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
                         put("order", "check_in desc")
                     }
                 )

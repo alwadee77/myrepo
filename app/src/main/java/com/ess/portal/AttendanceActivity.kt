@@ -41,6 +41,7 @@ class AttendanceActivity : AppCompatActivity() {
     }
 
     private lateinit var prefs: AppPreferences
+    private var isCheckedIn = false
 
     override fun attachBaseContext(newBase: Context) {
         val p = AppPreferences(newBase)
@@ -136,6 +137,7 @@ class AttendanceActivity : AppCompatActivity() {
         recordsView.removeAllViews()
 
         if (records == null || records.length() == 0) {
+            isCheckedIn = false
             btn.text = getString(R.string.attendance_check_in)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
             statusText.text = getString(R.string.status_not_clocked_in)
@@ -152,11 +154,13 @@ class AttendanceActivity : AppCompatActivity() {
         val checkOut = last.opt("check_out")
 
         if (checkOut == JSONObject.NULL) {
+            isCheckedIn = true
             btn.text = getString(R.string.attendance_register_check_out)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.error)
             statusText.text = getString(R.string.attendance_checked_in)
             lastAction.text = getString(R.string.attendance_since, formatTime(last.optString("check_in", "")))
         } else {
+            isCheckedIn = false
             btn.text = getString(R.string.attendance_register_check_in)
             btn.backgroundTintList = ContextCompat.getColorStateList(this, R.color.success)
             statusText.text = getString(R.string.status_completed)
@@ -249,8 +253,7 @@ class AttendanceActivity : AppCompatActivity() {
     }
 
     private fun requestLocationAndToggle() {
-        val btn = findViewById<Button>(R.id.btn_attendance_action)
-        if (btn.text == getString(R.string.attendance_register_check_out)) {
+        if (isCheckedIn) {
             toggleAttendance(null, null)
             return
         }

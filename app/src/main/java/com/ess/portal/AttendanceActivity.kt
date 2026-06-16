@@ -338,28 +338,24 @@ class AttendanceActivity : AppCompatActivity() {
                     }
                 }
 
-                val today = getTodayDate()
                 val result = OdooRpcClient.callKw(
                     baseUrl, db, "hr.attendance", "search_read",
                     kwargs = JSONObject().apply {
                         put("domain", JSONArray(listOf(
                             JSONArray(listOf("employee_id", "=", empId)),
-                            JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
+                            JSONArray(listOf("check_out", "=", false))
                         )))
-                        put("fields", JSONArray(listOf("id", "check_in", "check_out")))
-                        put("order", "check_in desc")
+                        put("fields", JSONArray(listOf("id", "check_in")))
+                        put("limit", 1)
                     }
                 )
-                val records = result as? JSONArray
+                val openRecords = result as? JSONArray
 
                 var checkedIn = false
                 var openId = 0
-                if (records != null && records.length() > 0) {
-                    val last = records.getJSONObject(0)
-                    if (last.opt("check_out") == JSONObject.NULL) {
-                        checkedIn = true
-                        openId = last.optInt("id", 0)
-                    }
+                if (openRecords != null && openRecords.length() > 0) {
+                    checkedIn = true
+                    openId = openRecords.getJSONObject(0).optInt("id", 0)
                 }
 
                 if (checkedIn && openId > 0) {

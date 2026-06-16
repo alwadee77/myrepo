@@ -334,21 +334,33 @@ class AttendanceActivity : AppCompatActivity() {
                 }
 
                 if (checkedIn && openId > 0) {
-                    val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
-                    OdooRpcClient.write(baseUrl, db, "hr.attendance", openId,
+                    val utcFmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                    utcFmt.timeZone = TimeZone.getTimeZone("UTC")
+                    val now = utcFmt.format(Date())
+                    val wrote = OdooRpcClient.write(baseUrl, db, "hr.attendance", openId,
                         JSONObject().apply { put("check_out", now) })
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_out_msg), Toast.LENGTH_SHORT).show()
+                        if (wrote) {
+                            Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_out_msg), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@AttendanceActivity, getString(R.string.error_loading, "Check-out failed"), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 } else {
-                    val now = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(Date())
-                    OdooRpcClient.create(baseUrl, db, "hr.attendance",
+                    val utcFmt = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+                    utcFmt.timeZone = TimeZone.getTimeZone("UTC")
+                    val now = utcFmt.format(Date())
+                    val newId = OdooRpcClient.create(baseUrl, db, "hr.attendance",
                         JSONObject().apply {
                             put("employee_id", empId)
                             put("check_in", now)
                         })
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_in_msg), Toast.LENGTH_SHORT).show()
+                        if (newId != null && newId > 0) {
+                            Toast.makeText(this@AttendanceActivity, getString(R.string.attendance_checked_in_msg), Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this@AttendanceActivity, getString(R.string.error_loading, "Check-in failed"), Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
 

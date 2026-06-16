@@ -313,6 +313,7 @@ class AttendanceActivity : AppCompatActivity() {
                             JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
                         )))
                         put("fields", JSONArray(listOf("id", "check_in", "check_out")))
+                        put("order", "check_in desc")
                     }
                 )
                 val records = result as? JSONArray
@@ -320,7 +321,7 @@ class AttendanceActivity : AppCompatActivity() {
                 var checkedIn = false
                 var openId = 0
                 if (records != null && records.length() > 0) {
-                    val last = records.getJSONObject(records.length() - 1)
+                    val last = records.getJSONObject(0)
                     if (last.opt("check_out") == JSONObject.NULL) {
                         checkedIn = true
                         openId = last.optInt("id", 0)

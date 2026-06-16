@@ -116,13 +116,14 @@ class DashboardActivity : AppCompatActivity() {
                             JSONArray(listOf("check_in", ">=", "$today 00:00:00"))
                         )))
                         put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
+                        put("order", "check_in desc")
                     }
                 )
                 val attendances = attResult as? JSONArray
 
                 withContext(Dispatchers.Main) {
                     if (attendances != null && attendances.length() > 0) {
-                        val last = attendances.getJSONObject(attendances.length() - 1)
+                        val last = attendances.getJSONObject(0)
                         val checkOut = last.opt("check_out")
                         val badge = findViewById<TextView>(R.id.tv_attendance_status_badge)
 

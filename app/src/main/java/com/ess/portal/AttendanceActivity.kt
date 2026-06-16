@@ -437,78 +437,77 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val ctx = this@AttendanceActivity
+                val log = StringBuilder()
 
-                // 1. Write portal_comment to attendance record
-                OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
+                // Step 1: Write comment
+                val wrote = OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
+                log.append("1. Write: $wrote\n")
 
-                // 2. Find all HR department employees with work_email and notify them
+                // Step 2: Find HR department
                 val hrManagerPartnerIds = JSONArray()
-                try {
-                    val hrDeptResult = OdooRpcClient.callKw(
-                        baseUrl, db, "hr.department", "search_read",
-                        kwargs = JSONObject().apply {
-                            put("domain", JSONArray(listOf(
-                                JSONArray(listOf("name", "ilike", "Human Resources"))
-                            )))
-                            put("fields", JSONArray(listOf("id", "name")))
-                        }
-                    ) as? JSONArray
-                    if (hrDeptResult != null) {
-                        for (i in 0 until hrDeptResult.length()) {
-                            val dept = hrDeptResult.optJSONObject(i) ?: continue
-                            val deptId = dept.optInt("id")
+                val hrDeptResult = OdooRpcClient.callKw(
+                    baseUrl, db, "hr.department", "search_read",
+                    kwargs = JSONObject().apply {
+                        put("domain", JSONArray(listOf(
+                            JSONArray(listOf("name", "ilike", "Human Resources"))
+                        )))
+                        put("fields", JSONArray(listOf("id", "name")))
+                    }
+                ) as? JSONArray
+                log.append("2. HR Depts found: ${hrDeptResult?.length() ?: 0}\n")
+                if (hrDeptResult != null) {
+                    for (i in 0 until hrDeptResult.length()) {
+                        log.append("   Dept: ${hrDeptResult.optJSONObject(i)?.optString("name")}\n")
+                    }
+                }
 
-                            val hrEmpResult = OdooRpcClient.callKw(
-                                baseUrl, db, "hr.employee", "search_read",
-                                kwargs = JSONObject().apply {
-                                    put("domain", JSONArray(listOf(
-                                        JSONArray(listOf("department_id", "=", deptId)),
-                                        JSONArray(listOf("work_email", "!=", false))
-                                    )))
-                                    put("fields", JSONArray(listOf("id", "name", "work_email")))
-                                }
-                            ) as? JSONArray
-                            if (hrEmpResult != null) {
-                                for (j in 0 until hrEmpResult.length()) {
-                                    val emp = hrEmpResult.optJSONObject(j) ?: continue
-                                    val email = emp.optString("work_email", "")
-                                    if (email.isNotEmpty()) {
-                                        val partnerResult = OdooRpcClient.callKw(
-                                            baseUrl, db, "res.partner", "search_read",
-                                            kwargs = JSONObject().apply {
-                                                put("domain", JSONArray(listOf(
-                                                    JSONArray(listOf("email", "=", email))
-                                                )))
-                                                put("fields", JSONArray(listOf("id")))
-                                                put("limit", 1)
-                                            }
-                                        ) as? JSONArray
-                                        val partnerId = partnerResult?.optJSONObject(0)?.optInt("id", 0) ?: 0
-                                        if (partnerId > 0) {
-                                            var alreadyHas = false
-                                            for (k in 0 until hrManagerPartnerIds.length()) {
-                                                if (hrManagerPartnerIds.optInt(k) == partnerId) {
-                                                    alreadyHas = true
-                                                    break
-                                                }
-                                            }
-                                            if (!alreadyHas) {
-                                                hrManagerPartnerIds.put(partnerId)
-                                            }
+                // Step 3: Find HR employees
+                if (hrDeptResult != null && hrDeptResult.length() > 0) {
+                    for (i in 0 until hrDeptResult.length()) {
+                        val deptId = hrDeptResult.optJSONObject(i)?.optInt("id") ?: continue
+                        val hrEmpResult = OdooRpcClient.callKw(
+                            baseUrl, db, "hr.employee", "search_read",
+                            kwargs = JSONObject().apply {
+                                put("domain", JSONArray(listOf(
+                                    JSONArray(listOf("department_id", "=", deptId)),
+                                    JSONArray(listOf("work_email", "!=", false))
+                                )))
+                                put("fields", JSONArray(listOf("id", "name", "work_email")))
+                            }
+                        ) as? JSONArray
+                        log.append("3. Employees in dept $deptId: ${hrEmpResult?.length() ?: 0}\n")
+                        if (hrEmpResult != null) {
+                            for (j in 0 until hrEmpResult.length()) {
+                                val emp = hrEmpResult.optJSONObject(j) ?: continue
+                                val email = emp.optString("work_email", "")
+                                val name = emp.optString("name", "")
+                                log.append("   Emp: $name | email: $email\n")
+                                if (email.isNotEmpty()) {
+                                    val partnerResult = OdooRpcClient.callKw(
+                                        baseUrl, db, "res.partner", "search_read",
+                                        kwargs = JSONObject().apply {
+                                            put("domain", JSONArray(listOf(
+                                                JSONArray(listOf("email", "=", email))
+                                            )))
+                                            put("fields", JSONArray(listOf("id")))
+                                            put("limit", 1)
                                         }
-                                    }
+                                    ) as? JSONArray
+                                    val partnerId = partnerResult?.optJSONObject(0)?.optInt("id", 0) ?: 0
+                                    log.append("   PartnerId for $email: $partnerId\n")
+                                    if (partnerId > 0) hrManagerPartnerIds.put(partnerId)
                                 }
                             }
                         }
                     }
-                } catch (_: Exception) {}
+                }
+                log.append("4. Total partnerIds: ${hrManagerPartnerIds.length()} -> $hrManagerPartnerIds\n")
 
-                // 3. Post to chatter with partner notification (sends email via Odoo mail server)
+                // Step 5: message_post
                 if (hrManagerPartnerIds.length() > 0) {
                     try {
-                        OdooRpcClient.callKw(
+                        val postResult = OdooRpcClient.callKw(
                             baseUrl, db, "hr.attendance", "message_post",
                             args = JSONArray(listOf(JSONArray(listOf(attendanceId)))),
                             kwargs = JSONObject().apply {
@@ -518,16 +517,28 @@ class AttendanceActivity : AppCompatActivity() {
                                 put("partner_ids", hrManagerPartnerIds)
                             }
                         )
-                    } catch (_: Exception) {}
+                        log.append("5. message_post result: $postResult\n")
+                    } catch (e: Exception) {
+                        log.append("5. message_post FAILED: ${e.message}\n")
+                    }
+                } else {
+                    log.append("5. SKIPPED - no partner IDs found\n")
                 }
 
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
-                    loadMonthAttendance()
+                    AlertDialog.Builder(this@AttendanceActivity)
+                        .setTitle("Debug Log")
+                        .setMessage(log.toString())
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
+                    AlertDialog.Builder(this@AttendanceActivity)
+                        .setTitle("FATAL ERROR")
+                        .setMessage(e.message ?: "unknown")
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             }
         }

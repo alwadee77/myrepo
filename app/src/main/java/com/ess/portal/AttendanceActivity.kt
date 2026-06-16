@@ -406,22 +406,57 @@ class AttendanceActivity : AppCompatActivity() {
                 OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
 
-                // 2. Call controller endpoint to send email via Odoo mail server
+                // 2. Fetch employee's manager email
+                var recipientEmail = ""
                 try {
-                    val sessionId = OdooRpcClient.getSession()?.sessionId ?: ""
-                    val endpoint = "$baseUrl/my/attendance/comment/submit"
-                    val conn = java.net.URL(endpoint).openConnection() as java.net.HttpURLConnection
-                    conn.requestMethod = "POST"
-                    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
-                    conn.setRequestProperty("Cookie", sessionId.split(";")[0])
-                    conn.doOutput = true
-                    conn.connectTimeout = 15000
-                    conn.readTimeout = 15000
-                    val body = "attendance_id=$attendanceId&comment=${java.net.URLEncoder.encode(comment, "UTF-8")}"
-                    java.io.OutputStreamWriter(conn.outputStream).use { it.write(body); it.flush() }
-                    conn.inputStream.bufferedReader().readText()
-                    conn.disconnect()
+                    val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
+                        args = JSONArray(listOf(
+                            JSONArray(listOf(attendanceId)),
+                            JSONArray(listOf("employee_id"))
+                        ))
+                    ) as? JSONArray
+                    val empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
+                    if (empId > 0) {
+                        val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
+                            args = JSONArray(listOf(
+                                JSONArray(listOf(empId)),
+                                JSONArray(listOf("parent_id"))
+                            ))
+                        ) as? JSONArray
+                        val mgrId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
+                        if (mgrId > 0) {
+                            val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
+                                args = JSONArray(listOf(
+                                    JSONArray(listOf(mgrId)),
+                                    JSONArray(listOf("work_email"))
+                                ))
+                            ) as? JSONArray
+                            recipientEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
+                        }
+                    }
                 } catch (_: Exception) {}
+
+                // 3. Create and send mail.mail via Odoo server
+                if (recipientEmail.isNotEmpty()) {
+                    try {
+                        val bodyHtml = "<div style=\"direction:ltr;font-family:Arial,sans-serif;padding:15px\">" +
+                            "<h2>Attendance Review Request</h2>" +
+                            "<p><b>Comment:</b></p>" +
+                            "<blockquote style=\"background:#f9f9f9;padding:10px;border-left:4px solid #007bff\">$comment</blockquote>" +
+                            "<hr/><p style=\"font-size:12px;color:#777\">Sent from ESS Portal App.</p></div>"
+                        val mailValues = JSONObject().apply {
+                            put("subject", "Attendance Review Request")
+                            put("body_html", bodyHtml)
+                            put("email_to", recipientEmail)
+                            put("auto_delete", false)
+                        }
+                        val mailId = OdooRpcClient.create(baseUrl, db, "mail.mail", mailValues)
+                        if (mailId != null && mailId > 0) {
+                            OdooRpcClient.callKw(baseUrl, db, "mail.mail", "send",
+                                args = JSONArray(listOf(JSONArray(listOf(mailId)))))
+                        }
+                    } catch (_: Exception) {}
+                }
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()

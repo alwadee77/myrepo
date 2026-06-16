@@ -76,6 +76,15 @@
     <string name="profile_pin">PIN</string>
     <string name="profile_not_found">Employee data not found</string>
 
+    <!-- Attendance Comment -->
+    <string name="comment_title">Attendance Comment</string>
+    <string name="comment_hint">Write your comment or dispute reason…</string>
+    <string name="comment_send">Send to HR</string>
+    <string name="comment_sent">Comment sent to HR!</string>
+    <string name="comment_failed">Failed to send comment</string>
+    <string name="comment_empty_warn">Please enter a comment</string>
+    <string name="cancel">Cancel</string>
+
     <!-- Attendance Screen -->
     <string name="attendance_check_in">Check In</string>
     <string name="attendance_register_check_in">Register Check-In</string>

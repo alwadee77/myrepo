@@ -76,6 +76,15 @@
     <string name="profile_pin">الرقم السري</string>
     <string name="profile_not_found">لم يتم العثور على بيانات الموظف</string>
 
+    <!-- Attendance Comment -->
+    <string name="comment_title">تعليق الحضور</string>
+    <string name="comment_hint">اكتب تعليقك أو سبب الاعتراض…</string>
+    <string name="comment_send">إرسال للموارد البشرية</string>
+    <string name="comment_sent">تم إرسال التعليق!</string>
+    <string name="comment_failed">فشل إرسال التعليق</string>
+    <string name="comment_empty_warn">الرجاء إدخال تعليق</string>
+    <string name="cancel">إلغاء</string>
+
     <!-- Attendance Screen -->
     <string name="attendance_check_in">تسجيل دخول</string>
     <string name="attendance_register_check_in">تسجيل دخول</string>

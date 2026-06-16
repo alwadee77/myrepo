@@ -1,9 +1,11 @@
 package com.ess.portal
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -67,7 +69,7 @@ class AttendanceActivity : AppCompatActivity() {
                             JSONArray(listOf("employee_id", "=", empId)),
                             JSONArray(listOf("check_in", ">=", "$monthStart 00:00:00"))
                         )))
-                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours")))
+                        put("fields", JSONArray(listOf("id", "check_in", "check_out", "worked_hours", "attendance_comment")))
                         put("order", "check_in desc")
                     }
                 )
@@ -124,11 +126,14 @@ class AttendanceActivity : AppCompatActivity() {
         }
 
         // Month records list
+        val isRtl = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
         for (i in 0 until records.length()) {
             val rec = records.getJSONObject(i)
             val ci = rec.optString("check_in", "")
             val co = rec.opt("check_out")
             val hours = rec.optDouble("worked_hours", 0.0)
+            val comment = rec.optString("attendance_comment", "")
+            val attId = rec.optInt("id", 0)
 
             val card = CardView(this)
             val lp = LinearLayout.LayoutParams(
@@ -150,7 +155,7 @@ class AttendanceActivity : AppCompatActivity() {
             val dateTv = TextView(this)
             dateTv.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             dateTv.text = formatDate(ci)
-            dateTv.textSize = 13f
+            dateTv.textSize = 14f
             dateTv.setTextColor(0xFF1E293B.toInt())
             dateTv.setTypeface(null, android.graphics.Typeface.BOLD)
 
@@ -171,14 +176,35 @@ class AttendanceActivity : AppCompatActivity() {
             hoursTv.text = if (hours > 0) "%.2f".format(hours) else "\u2014"
             hoursTv.textSize = 12f
             hoursTv.setTextColor(0xFF64748B.toInt())
-            hoursTv.textAlignment = View.TEXT_ALIGNMENT_VIEW_END
 
-            row.addView(dateTv)
-            row.addView(timeTv)
+            val commentBtn = Button(this)
+            val btnLp = LinearLayout.LayoutParams(80, 80)
+            btnLp.marginStart = 8
+            btnLp.marginEnd = 4
+            commentBtn.layoutParams = btnLp
+            commentBtn.text = if (comment.isNotEmpty()) "\u2705" else "\uD83D\uDCDD"
+            commentBtn.textSize = 18f
+            commentBtn.setBackgroundResource(android.R.color.transparent)
+            commentBtn.setOnClickListener {
+                showCommentDialog(attId, comment)
+            }
+
             val spacer = View(this)
-            spacer.layoutParams = LinearLayout.LayoutParams(16, 1)
-            row.addView(spacer)
-            row.addView(hoursTv)
+            spacer.layoutParams = LinearLayout.LayoutParams(8, 1)
+
+            if (isRtl) {
+                row.addView(commentBtn)
+                row.addView(hoursTv)
+                row.addView(spacer)
+                row.addView(timeTv)
+                row.addView(dateTv)
+            } else {
+                row.addView(dateTv)
+                row.addView(timeTv)
+                row.addView(spacer)
+                row.addView(hoursTv)
+                row.addView(commentBtn)
+            }
 
             card.addView(row)
             recordsView.addView(card)
@@ -239,6 +265,52 @@ class AttendanceActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@AttendanceActivity, getString(R.string.error_loading, e.message ?: ""), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun showCommentDialog(attendanceId: Int, currentComment: String) {
+        val input = EditText(this)
+        input.setText(currentComment)
+        input.hint = getString(R.string.comment_hint)
+        input.setPadding(32, 16, 32, 16)
+        input.textSize = 14f
+        input.setLines(4)
+
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.comment_title))
+            .setView(input)
+            .setPositiveButton(getString(R.string.comment_send)) { _, _ ->
+                val newComment = input.text.toString().trim()
+                if (newComment.isNotEmpty()) {
+                    saveComment(attendanceId, newComment)
+                } else {
+                    Toast.makeText(this, getString(R.string.comment_empty_warn), Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .show()
+    }
+
+    private fun saveComment(attendanceId: Int, comment: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val baseUrl = prefs.getUrl()
+                val db = prefs.getDb()
+                val success = OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
+                    JSONObject().apply { put("attendance_comment", comment) })
+                withContext(Dispatchers.Main) {
+                    if (success) {
+                        Toast.makeText(this@AttendanceActivity, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
+                        loadMonthAttendance()
+                    } else {
+                        Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }

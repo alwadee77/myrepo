@@ -437,25 +437,13 @@ class AttendanceActivity : AppCompatActivity() {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
-                val log = StringBuilder()
+                val ctx = this@AttendanceActivity
 
-                // Step 1: Write comment
-                val wrote = OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
+                // 1. Write portal_comment to attendance record
+                OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
-                log.append("1. Write comment: $wrote\n")
 
-                // Step 2a: Get employee_id from attendance
-                var empId = 0
-                val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
-                    args = JSONArray(listOf(
-                        JSONArray(listOf(attendanceId)),
-                        JSONArray(listOf("employee_id"))
-                    ))
-                ) as? JSONArray
-                empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
-                log.append("2. empId: $empId\n")
-
-                // Step 2b: Find HR department employees — get partner_id via work_email
+                // 2. Find all HR department employees with work_email and notify them
                 val hrManagerPartnerIds = JSONArray()
                 try {
                     val hrDeptResult = OdooRpcClient.callKw(
@@ -467,15 +455,11 @@ class AttendanceActivity : AppCompatActivity() {
                             put("fields", JSONArray(listOf("id", "name")))
                         }
                     ) as? JSONArray
-                    log.append("3. HR departments found: ${hrDeptResult?.length() ?: 0}\n")
                     if (hrDeptResult != null) {
                         for (i in 0 until hrDeptResult.length()) {
                             val dept = hrDeptResult.optJSONObject(i) ?: continue
                             val deptId = dept.optInt("id")
-                            val deptName = dept.optString("name")
-                            log.append("3a. Processing dept: $deptName (id=$deptId)\n")
 
-                            // Get all employees in this department with a work_email
                             val hrEmpResult = OdooRpcClient.callKw(
                                 baseUrl, db, "hr.employee", "search_read",
                                 kwargs = JSONObject().apply {
@@ -486,14 +470,11 @@ class AttendanceActivity : AppCompatActivity() {
                                     put("fields", JSONArray(listOf("id", "name", "work_email")))
                                 }
                             ) as? JSONArray
-                            log.append("3b. HR employees with work_email: ${hrEmpResult?.length() ?: 0}\n")
-
                             if (hrEmpResult != null) {
                                 for (j in 0 until hrEmpResult.length()) {
                                     val emp = hrEmpResult.optJSONObject(j) ?: continue
                                     val email = emp.optString("work_email", "")
                                     if (email.isNotEmpty()) {
-                                        // Find partner_id by email
                                         val partnerResult = OdooRpcClient.callKw(
                                             baseUrl, db, "res.partner", "search_read",
                                             kwargs = JSONObject().apply {
@@ -506,7 +487,6 @@ class AttendanceActivity : AppCompatActivity() {
                                         ) as? JSONArray
                                         val partnerId = partnerResult?.optJSONObject(0)?.optInt("id", 0) ?: 0
                                         if (partnerId > 0) {
-                                            // avoid duplicates
                                             var alreadyHas = false
                                             for (k in 0 until hrManagerPartnerIds.length()) {
                                                 if (hrManagerPartnerIds.optInt(k) == partnerId) {
@@ -516,25 +496,19 @@ class AttendanceActivity : AppCompatActivity() {
                                             }
                                             if (!alreadyHas) {
                                                 hrManagerPartnerIds.put(partnerId)
-                                                log.append("3c. Added: ${emp.optString("name")} <$email> (partner_id=$partnerId)\n")
                                             }
-                                        } else {
-                                            log.append("3c. No partner for email: $email\n")
                                         }
                                     }
                                 }
                             }
                         }
                     }
-                } catch (e: Exception) {
-                    log.append("3. HR dept search FAILED: ${e.message}\n")
-                }
-                log.append("4. total HR partner_ids: ${hrManagerPartnerIds.length()}\n")
+                } catch (_: Exception) {}
 
-                // Step 3: message_post to all HR employees
+                // 3. Post to chatter with partner notification (sends email via Odoo mail server)
                 if (hrManagerPartnerIds.length() > 0) {
                     try {
-                        val postResult = OdooRpcClient.callKw(
+                        OdooRpcClient.callKw(
                             baseUrl, db, "hr.attendance", "message_post",
                             args = JSONArray(listOf(JSONArray(listOf(attendanceId)))),
                             kwargs = JSONObject().apply {
@@ -544,28 +518,16 @@ class AttendanceActivity : AppCompatActivity() {
                                 put("partner_ids", hrManagerPartnerIds)
                             }
                         )
-                        log.append("5. message_post result: $postResult\n")
-                    } catch (e: Exception) {
-                        log.append("5. message_post FAILED: ${e.message}\n")
-                    }
-                } else {
-                    log.append("5. SKIPPED — no HR partner_ids found\n")
+                    } catch (_: Exception) {}
                 }
 
                 withContext(Dispatchers.Main) {
-                    AlertDialog.Builder(this@AttendanceActivity)
-                        .setTitle("Debug Log")
-                        .setMessage(log.toString())
-                        .setPositiveButton("OK", null)
-                        .show()
+                    Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
+                    loadMonthAttendance()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    AlertDialog.Builder(this@AttendanceActivity)
-                        .setTitle("FATAL ERROR")
-                        .setMessage(e.message)
-                        .setPositiveButton("OK", null)
-                        .show()
+                    Toast.makeText(this@AttendanceActivity, getString(R.string.comment_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -46,6 +46,11 @@ class DashboardActivity : AppCompatActivity() {
         loadDashboard()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadDashboard()
+    }
+
     private fun setupClickListeners() {
         findViewById<android.view.View>(R.id.btn_attendance).setOnClickListener {
             startActivity(Intent(this, AttendanceActivity::class.java))

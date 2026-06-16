@@ -98,6 +98,9 @@
     <string name="attendance_checked_in_msg">Checked in!</string>
     <string name="attendance_checked_out_msg">Checked out!</string>
 
+    <!-- Geofence -->
+    <string name="geofence_outside">You are %1$d meters away from the office. Must be inside to register.</string>
+
     <!-- Error -->
     <string name="error_loading">Error: %1$s</string>
 </resources>

@@ -2,7 +2,12 @@ package com.ess.portal
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -11,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +28,16 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 class AttendanceActivity : AppCompatActivity() {
+
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST = 1001
+    }
 
     private lateinit var prefs: AppPreferences
 
@@ -46,10 +60,21 @@ class AttendanceActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.btn_attendance_action).setOnClickListener {
-            toggleAttendance()
+            requestLocationAndToggle()
         }
 
         loadMonthAttendance()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLocationAndToggle()
+            } else {
+                toggleAttendance(null, null)
+            }
+        }
     }
 
     private fun loadMonthAttendance() {
@@ -211,13 +236,75 @@ class AttendanceActivity : AppCompatActivity() {
         }
     }
 
-    private fun toggleAttendance() {
+    private fun requestLocationAndToggle() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST)
+            return
+        }
+        getLocationAndToggle()
+    }
+
+    private fun getLocationAndToggle() {
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        try {
+            val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+            if (location != null) {
+                toggleAttendance(location.latitude, location.longitude)
+            } else {
+                locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, object : LocationListener {
+                    override fun onLocationChanged(loc: Location) {
+                        locationManager.removeUpdates(this)
+                        toggleAttendance(loc.latitude, loc.longitude)
+                    }
+                    override fun onProviderDisabled(provider: String) {
+                        toggleAttendance(null, null)
+                    }
+                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                    override fun onProviderEnabled(provider: String) {}
+                }, Looper.getMainLooper())
+            }
+        } catch (e: Exception) {
+            toggleAttendance(null, null)
+        }
+    }
+
+    private fun toggleAttendance(latitude: Double?, longitude: Double?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val baseUrl = prefs.getUrl()
                 val db = prefs.getDb()
                 val empId = OdooRpcClient.getEmployeeId()
                 if (empId == 0) return@launch
+
+                // Geofence check using GPS coordinates
+                if (latitude != null && longitude != null) {
+                    val empResult = OdooRpcClient.callKw(
+                        baseUrl, db, "hr.employee", "search_read",
+                        kwargs = JSONObject().apply {
+                            put("domain", JSONArray(listOf(JSONArray(listOf("id", "=", empId)))))
+                            put("fields", JSONArray(listOf("office_latitude", "office_longitude", "office_geofence_radius")))
+                            put("limit", 1)
+                        }
+                    )
+                    val employees = empResult as? JSONArray
+                    if (employees != null && employees.length() > 0) {
+                        val emp = employees.getJSONObject(0)
+                        val officeLat = emp.optDouble("office_latitude", 0.0)
+                        val officeLng = emp.optDouble("office_longitude", 0.0)
+                        val radius = emp.optDouble("office_geofence_radius", 100.0)
+                        if (officeLat != 0.0 && officeLng != 0.0) {
+                            val distance = calculateDistance(latitude, longitude, officeLat, officeLng)
+                            if (distance > radius) {
+                                val msg = getString(R.string.geofence_outside, Math.round(distance))
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(this@AttendanceActivity, msg, Toast.LENGTH_LONG).show()
+                                }
+                                return@launch
+                            }
+                        }
+                    }
+                }
 
                 val today = getTodayDate()
                 val result = OdooRpcClient.callKw(
@@ -268,6 +355,17 @@ class AttendanceActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val R = 6371000.0
+        val phi1 = Math.toRadians(lat1)
+        val phi2 = Math.toRadians(lat2)
+        val deltaPhi = Math.toRadians(lat2 - lat1)
+        val deltaLambda = Math.toRadians(lon2 - lon1)
+        val a = sin(deltaPhi / 2).pow(2) + cos(phi1) * cos(phi2) * sin(deltaLambda / 2).pow(2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return R * c
     }
 
     private fun showCommentDialog(attendanceId: Int, currentComment: String) {

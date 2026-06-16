@@ -98,6 +98,9 @@
     <string name="attendance_checked_in_msg">تم تسجيل الدخول!</string>
     <string name="attendance_checked_out_msg">تم تسجيل الخروج!</string>
 
+    <!-- Geofence -->
+    <string name="geofence_outside">أنت على بعد %1$d متر من المكتب. يجب أن تكون داخل النطاق لتسجيل الحضور.</string>
+
     <!-- Error -->
     <string name="error_loading">خطأ: %1$s</string>
 </resources>

@@ -443,8 +443,8 @@ class AttendanceActivity : AppCompatActivity() {
                 OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
 
-                // 2. Fetch employee's manager email
-                var recipientEmail = ""
+                // 2. Fetch manager's partner_id for notification
+                var managerPartnerId = 0
                 try {
                     val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
                         args = JSONArray(listOf(
@@ -460,38 +460,42 @@ class AttendanceActivity : AppCompatActivity() {
                                 JSONArray(listOf("parent_id"))
                             ))
                         ) as? JSONArray
-                        val mgrId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
-                        if (mgrId > 0) {
+                        val mgrEmpId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
+                        if (mgrEmpId > 0) {
                             val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
                                 args = JSONArray(listOf(
-                                    JSONArray(listOf(mgrId)),
-                                    JSONArray(listOf("work_email"))
+                                    JSONArray(listOf(mgrEmpId)),
+                                    JSONArray(listOf("user_id"))
                                 ))
                             ) as? JSONArray
-                            recipientEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
+                            val userId = mgrResult?.optJSONObject(0)?.optJSONArray("user_id")?.optInt(0) ?: 0
+                            if (userId > 0) {
+                                val userResult = OdooRpcClient.callKw(baseUrl, db, "res.users", "read",
+                                    args = JSONArray(listOf(
+                                        JSONArray(listOf(userId)),
+                                        JSONArray(listOf("partner_id"))
+                                    ))
+                                ) as? JSONArray
+                                managerPartnerId = userResult?.optJSONObject(0)?.optJSONArray("partner_id")?.optInt(0) ?: 0
+                            }
                         }
                     }
                 } catch (_: Exception) {}
 
-                // 3. Create and send mail.mail via Odoo server
-                if (recipientEmail.isNotEmpty()) {
+                // 3. Post to chatter with partner notification (sends email via Odoo mail server)
+                if (managerPartnerId > 0) {
                     try {
-                        val bodyHtml = "<div style=\"direction:ltr;font-family:Arial,sans-serif;padding:15px\">" +
-                            "<h2>Attendance Review Request</h2>" +
-                            "<p><b>Comment:</b></p>" +
-                            "<blockquote style=\"background:#f9f9f9;padding:10px;border-left:4px solid #007bff\">$comment</blockquote>" +
-                            "<hr/><p style=\"font-size:12px;color:#777\">Sent from ESS Portal App.</p></div>"
-                        val mailValues = JSONObject().apply {
-                            put("subject", "Attendance Review Request")
-                            put("body_html", bodyHtml)
-                            put("email_to", recipientEmail)
-                            put("auto_delete", false)
-                        }
-                        val mailId = OdooRpcClient.create(baseUrl, db, "mail.mail", mailValues)
-                        if (mailId != null && mailId > 0) {
-                            OdooRpcClient.callKw(baseUrl, db, "mail.mail", "send",
-                                args = JSONArray(listOf(JSONArray(listOf(mailId)))))
-                        }
+                        OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "message_post",
+                            args = JSONArray(listOf(
+                                JSONArray(listOf(attendanceId)),
+                                JSONObject().apply {
+                                    put("body", "\u270D\ufe0f Portal Comment: $comment")
+                                    put("message_type", "comment")
+                                    put("subtype_xmlid", "mail.mt_comment")
+                                    put("partner_ids", JSONArray(listOf(managerPartnerId)))
+                                }
+                            ))
+                        )
                     } catch (_: Exception) {}
                 }
 

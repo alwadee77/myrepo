@@ -406,47 +406,22 @@ class AttendanceActivity : AppCompatActivity() {
                 OdooRpcClient.write(baseUrl, db, "hr.attendance", attendanceId,
                     JSONObject().apply { put("portal_comment", comment) })
 
-                // 2. Fetch employee and manager email
-                var recipientEmail = ""
+                // 2. Call controller endpoint to send email via Odoo mail server
                 try {
-                    val attResult = OdooRpcClient.callKw(baseUrl, db, "hr.attendance", "read",
-                        args = JSONArray(listOf(
-                            JSONArray(listOf(attendanceId)),
-                            JSONArray(listOf("employee_id"))
-                        ))
-                    ) as? JSONArray
-                    val empId = attResult?.optJSONObject(0)?.optJSONArray("employee_id")?.optInt(0) ?: 0
-                    if (empId > 0) {
-                        val empResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                            args = JSONArray(listOf(
-                                JSONArray(listOf(empId)),
-                                JSONArray(listOf("parent_id"))
-                            ))
-                        ) as? JSONArray
-                        val mgrId = empResult?.optJSONObject(0)?.optJSONArray("parent_id")?.optInt(0) ?: 0
-                        if (mgrId > 0) {
-                            val mgrResult = OdooRpcClient.callKw(baseUrl, db, "hr.employee", "read",
-                                args = JSONArray(listOf(
-                                    JSONArray(listOf(mgrId)),
-                                    JSONArray(listOf("work_email"))
-                                ))
-                            ) as? JSONArray
-                            recipientEmail = mgrResult?.optJSONObject(0)?.optString("work_email", "") ?: ""
-                        }
-                    }
+                    val sessionId = OdooRpcClient.getSession()?.sessionId ?: ""
+                    val endpoint = "$baseUrl/my/attendance/comment/submit"
+                    val conn = java.net.URL(endpoint).openConnection() as java.net.HttpURLConnection
+                    conn.requestMethod = "POST"
+                    conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+                    conn.setRequestProperty("Cookie", sessionId.split(";")[0])
+                    conn.doOutput = true
+                    conn.connectTimeout = 15000
+                    conn.readTimeout = 15000
+                    val body = "attendance_id=$attendanceId&comment=${java.net.URLEncoder.encode(comment, "UTF-8")}"
+                    java.io.OutputStreamWriter(conn.outputStream).use { it.write(body); it.flush() }
+                    conn.inputStream.bufferedReader().readText()
+                    conn.disconnect()
                 } catch (_: Exception) {}
-
-                // 3. Send email from Android device
-                if (recipientEmail.isNotEmpty()) {
-                    val intent = android.content.Intent(android.content.Intent.ACTION_SENDTO).apply {
-                        data = android.net.Uri.parse("mailto:$recipientEmail")
-                        putExtra(android.content.Intent.EXTRA_SUBJECT, "Attendance Review Request - Comment")
-                        putExtra(android.content.Intent.EXTRA_TEXT, comment)
-                    }
-                    withContext(Dispatchers.Main) {
-                        ctx.startActivity(android.content.Intent.createChooser(intent, "Send Email"))
-                    }
-                }
 
                 withContext(Dispatchers.Main) {
                     Toast.makeText(ctx, getString(R.string.comment_sent), Toast.LENGTH_SHORT).show()
